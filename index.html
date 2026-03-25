@@ -39,7 +39,7 @@
                 workersOwned = workersOwned + 1;
                 workerPrice = workersOwned * 20; //You need to update this to be exponential so its balanced
                 document.getElementById('updateTs').innerText = "pesos🤑: " + variable;
-                document.getElementById('workersOwnedId').innerText = "Workers Owned🧑🏽‍🌾🌮⚽:"  + workersOwned;
+                document.getElementById('workersOwnedId').innerText = "Workers Owned🧑🏽‍🌾:"  + workersOwned;
                 document.getElementById('buyWorkerButton').innerText = "buy a Worker(only " + workerPrice + " pesos🫰🤑💰)";
                 if(workersOwned == 15){
                     if(workersMaxed == false){
@@ -206,6 +206,10 @@
         betDisplay.innerText = "Bet: 0"
         };
     };
+
+    function toggleSettings(){
+        document.getElementById("settingSection").classList.toggle("expanded");
+    };
     
 </script>
     
@@ -286,6 +290,12 @@
             transition: all 0.3s ease;
         }
 
+        #clickButton:hover {
+            transform: scale(1.05); /* Grows just a tiny bit */
+            filter: brightness(1.5); /* Lights up slightly */
+            transition: all 0.2s ease;
+        }
+
         /* 5. General Buttons */
         .btn, button {
             width: 100%;
@@ -322,12 +332,56 @@
         #crashStartButton { background: #10b981; }
         #crashStopButton { background: #ef4444; }
         #setBetButton { background: #8b5cf6; }
+        #hideLockedButton {
+            transform: translateX(15px);
+        }
+        #secondSetting {
+            transform: translateX(15px);
+        }
+        #settingsButton {
+            padding: 16px;
+            font-size: 1.5rem;
+        }
+
+        #settingSection {
+            max-height: 0;
+            overflow: hidden;
+
+            transition: max-height 0.35s ease-out;
+
+                position: relative; 
+        }
+
+        #settingSection.expanded {
+            max-height: 200px;
+        }
+
+        #settingSection::before {
+            content: "";          /* Required: This tells CSS to 'create' the shape */
+            position: absolute;   /* Let us place it anywhere */
+            top: 0;               /* Start at the top of the section */
+            left: 15px;           /* Adjust this to line up with your Settings button center */
+            width: 15px;           /* The thickness of the line */
+            height: 100%;         /* Stretches to the bottom of the section */
+            background: rgba(255, 255, 255, 0.3); /* Subtle white color */
+        }
+
+        #settingsButton:hover {
+            transform: scale(1.05); /* Grows just a tiny bit */
+            filter: brightness(1.5); /* Lights up slightly */
+            transition: all 0.2s ease;
+        }
+
     </style>
 
 
     <div id="verticalStack1" class="vertical-stack">
-        <div id="dashboard2" class="game-card">
-            <button id="settingsButton" onclick="">Settings⚙</button>
+        <div id="settingsDashboard" class="game-card">
+            <button id="settingsButton" onclick="toggleSettings();">Settings⚙</button>
+                <div id="settingSection" class="settingSectionClass">
+                    <button id="hideLockedButton" style="width: auto; padding: 12px 165px; font-size: 0.8rem;" onclick="">Hide Locked🔒: ❌</button>
+                    <button id="secondSetting" style="width: auto; padding: 12px 185px; font-size: 0.8rem;" onclick="">setting two</button>
+                </div>
         </div>
         <div id="dashboard3" class="game-card">
             <h1 id="loanDashboard">LOANS🏦</h1>
@@ -342,7 +396,7 @@
     <div class="game-card">
         <p style="font-size: 1.2rem; font-style: italic; opacity: 0.8;">Welcome to my silly game :)</p>
         
-        <button id="ILIKEMONEY" onclick="ilikemoney();">🤑 I LIKE MONEY</button>
+        <button id="ILIKEMONEY" onclick="ilikemoney();">🤑 100000000 money</button>
         
         <h1 id="updateTs" class="pesos-display">pesos🤑: 0</h1>
         
