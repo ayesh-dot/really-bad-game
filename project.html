@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> really silly game </title>
+    <style>
+        
+        
+    </style>
+</head>
+<body>
+
+
+<script>
+
+    let variable = 0;
+    let lifeTimeEarnings = 0;
+    let maxLoan = 0;
+
+    function ilikemoney(){
+        variable = 99999999;
+        updateEngine();
+    };
+    
+    function updateEngine() {
+        variable = variable + 1;
+        lifeTimeEarnings = lifeTimeEarnings + 1;
+        document.getElementById('updateTs').innerText = "pesos🤑: " + variable;
+        maxLoan = 0.35 * lifeTimeEarnings;
+        maxLoan = Math.round(maxLoan);
+        document.getElementById('maxLoanLabel').innerText = "Max Loan: " + maxLoan;
+    };
+
+    let workersOwned = 0;
+    let workerPrice = 10;
+    let workersMaxed = false;
+    let dagestanUpgradeAvailable = false;
+    let dagestanUpgrade = false;
+
+    function buyWorker(){
+        if(variable > (workerPrice - 1)){
+            if(workersOwned < 15){
+                variable = variable - workerPrice;
+                workersOwned = workersOwned + 1;
+                workerPrice = workersOwned * 20; //You need to update this to be exponential so its balanced
+                document.getElementById('updateTs').innerText = "pesos🤑: " + variable;
+                document.getElementById('workersOwnedId').innerText = "Workers Owned🧑🏽‍🌾:"  + workersOwned;
+                document.getElementById('buyWorkerButton').innerText = "buy a Worker(only " + workerPrice + " pesos🫰🤑💰)";
+                if(workersOwned == 15){
+                    if(workersMaxed == false){
+                        document.getElementById('buyWorkerButton').innerText = "❌ MAXED OUT THERE BUB ❌";
+                        document.getElementById('specialUpgradeLabel').innerText = "SPECIAL UPGRADE: DAGESTAN🏔";
+                        document.getElementById('dagestanUpgradeButton').innerText = "BRATHA SEND THEM 2-3 YEARS DAGESTAN AND FORGET🏔🤼🐻 (5,000 pesos)";
+                        dagestanUpgradeAvailable = true;
+                        workersMaxed = true;
+                    };   
+                };
+            }; 
+        };
+    };
+
+    function makeWorkersWork(){
+        if(dagestanUpgrade == true){
+            variable = variable + workersOwned * 10;
+            lifeTimeEarnings = lifeTimeEarnings + workersOwned * 10;
+            maxLoan = 0.35 * lifeTimeEarnings;
+            maxLoan = Math.round(maxLoan);
+            document.getElementById('maxLoanLabel').innerText = "Max Loan: " + maxLoan;
+        } else{
+            variable = variable + workersOwned;
+            lifeTimeEarnings = variable + workersOwned;
+            maxLoan = 0.35 * lifeTimeEarnings;
+            maxLoan = Math.round(maxLoan);
+            document.getElementById('maxLoanLabel').innerText = "Max Loan: " + maxLoan;
+        };
+        document.getElementById('updateTs').innerText = "pesos🤑: " + variable;
+    };
+
+    function buyDagestanUpgrade(){
+        if (dagestanUpgradeAvailable == true){
+            if(variable > 4999)
+            dagestanUpgrade = true;
+            variable = variable - 5001;
+            updateEngine();
+            document.getElementById('dagestanUpgradeButton').innerText = "sent to dagestan✅";
+            document.getElementById('buyCrashButton').innerText = "💠CRASH💠 (10,000 pesos🫰🤑💰)";
+            document.getElementById('sectionTwoLabel').innerText = "SECTION 2 : 💎CASINO💎";
+        };
+    };
+
+    let crashPurchased = false;
+    function buyCrash(){
+        if(dagestanUpgrade == true){
+            if(variable > 9999){
+                variable = variable - 10000;
+                const crashButtonElement = document.getElementById("buyCrashButton");
+                crashButtonElement.style.visibility = "hidden";
+                betDisplay.innerText = "Bet: 0";
+                multiplierDisplay.innerText = "Multiplier: 1.00x";
+                setBetButton.innerText = "Set Bet💵";
+                crashStartButton.innerText = "Start📈";
+                crashStopButton.innerText = "Stop🛑";
+                crashPurchased = true;
+                crashStopButton.disabled = true;
+           };
+        };
+    };
+
+
+    let crashPointRange = 0;
+    let crashPointMaximum = 0;
+    let crashPoint = 0;
+    function getCrashPoint(){
+        crashPointRange = Math.random() * 100;
+        
+        if(crashPointRange < 60){
+          crashPointMaximum = 3;  
+        } else if(crashPointRange < 80){
+            crashPointMaximum = 5;
+        } else if(crashPointRange > 80){
+            if(crashPointRange < 95){
+                crashPointMaximum = 10;
+            } else if(crashPointRange > 95){
+                crashPointMaximum = 15;
+            };
+        };
+        if(crashPointMaximum == 3){
+            crashPointRange = Math.random() * 3;
+        } else if(crashPointMaximum == 5 ){
+            crashPointRange = Math.random() * 5;
+        } else if(crashPointMaximum == 10){
+            crashPointRange = Math.random() * 10;
+        } else if(crashPointMaximum == 15){
+            crashPointRange = Math.random() * 15;
+        };
+        crashPoint = crashPointMaximum - crashPointRange;
+        crashPoint = crashPoint * 10;
+        crashPoint = Math.round(crashPoint);
+        crashPoint = crashPoint / 10;
+        crashPoint = crashPoint + 1;
+    };
+
+    let bet = 0;
+    let crashDisplayStatus = 0;
+    let crashPointGotten = false;
+
+    function setBet(){
+        if(crashPurchased == true){
+        bet = prompt("How much ya wanna bet bubba?? (type a to go all in)");
+        if (bet > variable){
+            bet = 0;
+            betDisplay.innerText = "Bet: " + bet;
+        } else if(bet == 'a'){
+            bet = variable;
+            betDisplay.innerText = "Bet: " + bet;
+        } else{
+            betDisplay.innerText = "Bet: " + bet;
+            multiplierDisplay.innerText = "Multiplier: 1.00x";
+        };
+            };
+    };
+
+    let ticker;
+    let current = 1.00;
+    let speed = 50;
+    
+    function startCrash(){
+        if(crashPurchased == true){
+            if(bet > 0){
+                if(crashPointGotten == false)
+                startTicker();
+                getCrashPoint();
+                crashPointGotten = true;
+                crashStopButton.disabled = false;
+            };
+        };
+    };
+
+    function startTicker(){
+        if(crashPurchased == true){
+
+        current = 1.00;
+        clearInterval(ticker);
+
+        ticker = setInterval(() => {
+
+            //what it does:
+            current = current + 0.01;
+            multiplierDisplay.innerText = current.toFixed(2) + "x";
+
+            if(current >= crashPoint){
+                stopTicker();   
+            }
+        }, speed);
+        };
+    };
+
+    function stopTicker(){
+        clearInterval(ticker);
+        variable = variable - bet;
+        variable = Math.round(variable) - 1;
+        updateEngine();
+        bet = 0;
+        betDisplay.innerText = "Bet: 0"
+        multiplierDisplay.innerText = "CRASHED💥💥 AT " + current.toFixed(2) + "x";
+        crashStopButton.disabled = true;
+        crashPointGotten = false;
+    };
+
+    function stopTickerPositive(){
+        if(crashPurchased == true){
+        bet = bet * current;
+        variable = variable + bet;
+        lifeTimeEarnings = variable + bet;
+        variable = Math.round(variable) - 1;
+        updateEngine();
+        clearInterval(ticker);
+        crashPointGotten = false;
+        bet = 0;
+        betDisplay.innerText = "Bet: 0"
+        };
+    };
+
+    function toggleSettings(){
+        document.getElementById("settingSection").classList.toggle("expanded");
+    };
+
+    let loanInterest;
+    
+    let takeOutLoanButton;
+    let payDebtButton;
+    let timerBarElement;
+
+    window.onload = () => {
+        takeOutLoanButton = document.getElementById('takeOutLoanButton');
+        takeOutLoanButton.disabled = true;
+        payDebtButton = document.getElementById('payDebtButton');
+        payDebtButton.disabled = true;
+        timerBarElement = document.getElementById('timerBar');
+        timerBarElement.disabled = true;
+        timerBarElement.style.opacity = "1";
+        timerBarElement.style.cursor = "default";
+    };
+    
+    function calculateInterest(){
+        const loanAmount = parseFloat(document.getElementById('loanAmountInput').value);
+        const loanLength = parseFloat(document.getElementById('loanLengthInput').value);
+        if(!loanAmount){
+            document.getElementById('loanAmountInput').focus();
+            document.getElementById('loanAmountInput').value = "";
+            alert("PLEASE ENTER LOAN AMOUNT");
+        } else if(!loanLength){
+            document.getElementById('loanLengthInput').focus();
+            document.getElementById('loanLengthInput').value = "";
+            alert("PLEASE ENTER LOAN LENGTH");
+        } else{
+            if(loanAmount < 0){
+                document.getElementById('loanAmountInput').focus();
+                document.getElementById('loanAmountInput').value = "";
+                alert("INVALID LOAN AMOUNT");
+            } else if(loanAmount > maxLoan){
+                document.getElementById('loanAmountInput').focus();
+                document.getElementById('loanAmountInput').value = "";
+                alert("INVALID LOAN AMOUNT");
+            } else {
+                if(loanLength < 10){
+                    document.getElementById('loanLengthInput').focus();
+                    document.getElementById('loanLengthInput').value = "";
+                    alert("LOAN MUST AT LEAST BE 10 SECONDS");
+                } else if(loanLength > 180){
+                    document.getElementById('loanLengthInput').focus();
+                    document.getElementById('loanLengthInput').value = "";
+                    alert("LOAN CANNOT EXCEED 3 MINUTES (180 SECONDS)");
+                } else{
+                    loanInterest = .25 * loanLength;
+                    loanInterest /= 100;
+                    loanInterest *= loanAmount;
+                    loanInterest += loanAmount;
+                    variable -= 1;
+                    variable += loanAmount;
+                    updateEngine();
+                    takeOutLoanButton.disabled = false;
+                    document.getElementById('interestLabel').innerText = "Debt With Interest: " + loanInterest;
+                };
+            };
+        };
+    };
+
+    let ticker2;
+
+    function takeOutLoan() {
+        takeOutLoanButton.disabled = true;
+        payDebtButton.disabled = false;
+        const loanLength = parseFloat(document.getElementById('loanLengthInput').value);
+        const startTime = Date.now();
+        const durationMs = loanLength * 1000;
+        const timerBar = document.getElementById('timerBar');
+    
+        clearInterval(ticker2);
+        ticker2 = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            let progress = ((durationMs - elapsed) / durationMs) * 100;
+    
+            if (progress <= 0) {
+                progress = 100;
+                clearInterval(ticker2);
+                mayDay();
+            }
+    
+            timerBar.style.width = progress + "%";
+        }, 50);
+    }
+
+    function payDebt(){
+        if (loanInterest <= variable){
+        clearInterval(ticker2);
+        progress = 100;
+        timerBar.style.width = progress + "%";
+        payDebtButton.disabled = true;
+        variable -= loanInterest;
+        variable = Math.round(variable);
+        variable -= 1;
+        updateEngine();
+        } else{
+            alert("CARD DECLINED");
+        };
+    };
+
+    function mayDay(){
+        alert("YO SHI GETTING REPOSSESSED TWIN!!");
+        
+        workersOwned = 0;
+        workerPrice = 10;
+        workersMaxed = false;
+        dagestanUpgradeAvailable = false;
+        dagestanUpgrade = false;
+        loanInterest *= 4;
+        variable -= loanInterest;
+        variable = Math.round(variable);
+        updateEngine();
+        document.getElementById('workersOwnedId').innerText = "Workers Owned🧑🏽‍🌾:"  + workersOwned;
+        document.getElementById('buyWorkerButton').innerText = "buy a Worker(only " + workerPrice + " pesos🫰🤑💰)";
+        document.getElementById('specialUpgradeLabel').innerText = "SPECIAL UPGRADE: DAGESTAN🏔";
+        document.getElementById('dagestanUpgradeButton').innerText = "BRATHA SEND THEM 2-3 YEARS DAGESTAN AND FORGET🏔🤼🐻 (5,000 pesos)";
+    };
+    
+</script>
+    
+<div class="game-container">
+        <style>
+            * { box-sizing: border-box; }
+
+        /* 1. Background & Layout */
+        body {
+    background: radial-gradient(circle, #1e293b 0%, #0f172a 100%);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: white;
+    margin: 0;
+    min-height: 100vh;
+}
+
+/* THE FIX: Apply flex to the container holding the cards */
+.game-container {
+    display: flex;
+    flex-direction: row;      /* Side-by-side */
+    flex-wrap: wrap;          /* Stacks on mobile */
+    justify-content: center;  /* Centers cards horizontally */
+    align-items: flex-start;  /* Aligns tops of cards */
+    gap: 30px;                /* Space between cards */
+    padding: 40px 20px;
+    width: 100%;
+}
+
+/* 2. Main Dashboard Card (Cleaned up) */
+.game-card {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+    
+    /* Ensure they don't grow too wide to stay side-by-side */
+    width: 100%;
+    max-width: 600px; 
+    flex: 0 1 auto; 
+}
+
+            .vertical-stack {
+    display: flex;
+    flex-direction: column; /* This container stacks its children */
+    gap: 20px;
+}
+
+        /* 3. Typography */
+        h1, h2, p { margin: 10px 0; }
+        .pesos-display {
+            font-size: 2.5rem;
+            color: #4ade80; /* Money Green */
+            text-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
+        }
+        
+        .multiplier {
+            font-size: 3.5rem;
+            color: #38bdf8;
+            font-weight: 800;
+        }
+
+        /* 4. The Giant Clicky Button */
+        #clickButton {
+            background: linear-gradient(135px, #6366f1, #a855f7);
+            font-size: 1.5rem !important;
+            padding: 30px !important;
+            border-radius: 50% !important;
+            width: 150px !important;
+            height: 150px !important;
+            margin: 20px auto !important;
+            display: block;
+            border: 4px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        #clickButton:hover {
+            transform: scale(1.05); /* Grows just a tiny bit */
+            filter: brightness(1.5); /* Lights up slightly */
+            transition: all 0.2s ease;
+        }
+
+        /* 5. General Buttons */
+        .btn, button {
+            width: 100%;
+            padding: 14px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.4s;
+            color: white;
+            background: #334155; /* Default gray-blue */
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            filter: brightness(1.2);
+        }
+
+        button:active:not(:disabled) { transform: scale(0.95); }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Specific Colors */
+        #ILIKEMONEY { background: #eab308; color: #000; } /* Gold */
+        #buyWorkerButton { background: #22c55e; }
+        #makeWorkersWorkButton { background: #3b82f6; }
+        #crashStartButton { background: #10b981; }
+        #crashStopButton { background: #ef4444; }
+        #setBetButton { background: #8b5cf6; }
+        #hideLockedButton {
+            transform: translateX(15px);
+        }
+        #secondSetting {
+            transform: translateX(15px);
+        }
+        #settingsButton {
+            padding: 16px;
+            font-size: 1.5rem;
+        }
+
+        #settingSection {
+            max-height: 0;
+            overflow: hidden;
+
+            transition: max-height 0.35s ease-out;
+
+                position: relative; 
+        }
+
+        #settingSection.expanded {
+            max-height: 200px;
+        }
+
+        #settingSection::before {
+            content: "";          /* Required: This tells CSS to 'create' the shape */
+            position: absolute;   /* Let us place it anywhere */
+            top: 0;               /* Start at the top of the section */
+            left: 15px;           /* Adjust this to line up with your Settings button center */
+            width: 15px;           /* The thickness of the line */
+            height: 100%;         /* Stretches to the bottom of the section */
+            background: rgba(255, 255, 255, 0.3); /* Subtle white color */
+        }
+
+        #settingsButton:hover {
+            transform: scale(1.05); /* Grows just a tiny bit */
+            filter: brightness(1.5); /* Lights up slightly */
+            transition: all 0.2s ease;
+        }
+
+        #timerBar {
+            display: block;
+            height: 10px;
+            max-width: 550px;
+            width: 100%;
+            background: #ef4444;
+        }
+
+
+    </style>
+
+
+    <div id="verticalStack1" class="vertical-stack">
+        <div id="settingsDashboard" class="game-card">
+            <button id="settingsButton" onclick="toggleSettings();">Settings⚙</button>
+                <div id="settingSection" class="settingSectionClass">
+                    <button id="hideLockedButton" style="width: auto; padding: 12px 165px; font-size: 0.8rem;" onclick="">Hide Locked🔒: ❌</button>
+                    <button id="secondSetting" style="width: auto; padding: 12px 185px; font-size: 0.8rem;" onclick="">setting two</button>
+                </div>
+        </div>
+        <div id="dashboard3" class="game-card">
+            <h1 id="loanDashboard">LOANS🏦</h1>
+            <h2 >TAKE OUT A LOAN:</h2>
+            <input id="loanAmountInput" type="number" placeholder="Loan Amount (e.g. 10000)">
+            <input id="loanLengthInput" type="number" placeholder="Loan Length (10-180 seconds)" style="margin-bottom: 8px;">
+            <button id="calculateInterest" onclick="calculateInterest();">Calculate Interest</button>
+            <h2 id="maxLoanLabel">Max Loan: 0</h2>
+            <h2 id="interestLabel">Debt With Interest: 0</h2>
+            <button id="takeOutLoanButton" onclick="takeOutLoan();">Take Out Loan</button>
+            <button id="timerBar">
+            <button id="payDebtButton" onclick="payDebt();">Pay Your Debt</button>
+        </div>
+    </div>
+
+    
+    
+    <div class="game-card">
+        <p style="font-size: 1.2rem; font-style: italic; opacity: 0.8;">Welcome to my silly game :)</p>
+        
+        <button id="ILIKEMONEY" onclick="ilikemoney();">🤑 100000000 money</button>
+        
+        <h1 id="updateTs" class="pesos-display">pesos🤑: 0</h1>
+        
+        <button id="clickButton" onclick="updateEngine()">CLICK!</button>
+
+        <h2 id="workersOwnedId" style="font-size: 1rem;">Workers Owned🧑🏽‍🌾: 0</h2>
+        
+        <button class="btn" id="buyWorkerButton" onclick="buyWorker()">Buy Worker (10 pesos🫰)</button>
+        
+        <button class="btn" id="makeWorkersWorkButton" onclick="
+            this.disabled = true;
+            this.innerText = 'Wait 3s';
+            setTimeout(() => this.innerText = 'Wait 2s', 1000);
+            setTimeout(() => this.innerText = 'Wait 1s', 2000);
+            setTimeout(() => { this.innerText = 'Start Working ⛏'; this.disabled = false; }, 3000);
+            makeWorkersWork()">Start Working ⛏</button>
+
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
+
+        <h2 id="specialUpgradeLabel" style="font-size: 0.9rem; opacity: 0.6;">SPECIAL UPGRADE: LOCKED🔒</h2>
+        <button class="btn" id="dagestanUpgradeButton" onclick="buyDagestanUpgrade();">LOCKED🔒</button>
+        
+        <h2 id="sectionTwoLabel" style="font-size: 0.9rem; opacity: 0.6;">SECTION 2: LOCKED🔒</h2>
+        <button class="btn" id="buyCrashButton" onclick="buyCrash()">LOCKED🔒</button>
+        
+        <div id="crash-section">
+            <h1 id="betDisplay" style="font-size: 1.2rem;">LOCKED🔒</h1>
+            <h1 id="multiplierDisplay" class="multiplier">LOCKED🔒</h1>
+            <button id="setBetButton" onclick="setBet();">LOCKED 🔒</button>
+            <button id="crashStartButton" onclick="startCrash();">LOCKED 🔒</button>
+            <button id="crashStopButton" onclick="stopTickerPositive();">LOCKED 🔒</button>
+
+        </div>
+    </div>
+</div>
+
+
