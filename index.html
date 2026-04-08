@@ -21,6 +21,10 @@
     function ilikemoney(){
         variable = 99999999;
         updateEngine();
+        dagestanUpgradeAvailable = true;
+        buyDagestanUpgrade();
+        buyCrash();
+        buyBlackJack();
     };
     
     function updateEngine() {
@@ -84,7 +88,7 @@
             variable = variable - 5001;
             updateEngine();
             document.getElementById('dagestanUpgradeButton').innerText = "sent to dagestan✅";
-            document.getElementById('buyCrashButton').innerText = "💠CRASH💠 (10,000 pesos🫰🤑💰)";
+            document.getElementById('buyCrashButton').innerText = "💠BUY CRASH💠 (10,000 pesos🫰🤑💰)";
             document.getElementById('sectionTwoLabel').innerText = "SECTION 2 : 💎CASINO💎";
         };
     };
@@ -103,6 +107,8 @@
                 crashStopButton.innerText = "Stop🛑";
                 crashPurchased = true;
                 crashStopButton.disabled = true;
+                document.getElementById('blackJackLabel').innerText = "♠BLACKJACK♠";
+                document.getElementById('buyBlackJackButton').innerText = "♠BUY BLACKJACK♠(35,000 pesos🫰🤑💰)";
            };
         };
     };
@@ -153,6 +159,9 @@
             betDisplay.innerText = "Bet: " + bet;
         } else if(bet == 'a'){
             bet = variable;
+            betDisplay.innerText = "Bet: " + bet;
+        } else if(bet < 0){
+            bet = 0;
             betDisplay.innerText = "Bet: " + bet;
         } else{
             betDisplay.innerText = "Bet: " + bet;
@@ -277,9 +286,7 @@
                     loanInterest /= 100;
                     loanInterest *= loanAmount;
                     loanInterest += loanAmount;
-                    variable -= 1;
-                    variable += loanAmount;
-                    updateEngine();
+                    
                     takeOutLoanButton.disabled = false;
                     document.getElementById('interestLabel').innerText = "Debt With Interest: " + loanInterest;
                 };
@@ -296,6 +303,9 @@
         const startTime = Date.now();
         const durationMs = loanLength * 1000;
         const timerBar = document.getElementById('timerBar');
+        variable -= 1;
+        variable += loanAmount;
+        updateEngine();
     
         clearInterval(ticker2);
         ticker2 = setInterval(() => {
@@ -344,7 +354,388 @@
         document.getElementById('specialUpgradeLabel').innerText = "SPECIAL UPGRADE: DAGESTAN🏔";
         document.getElementById('dagestanUpgradeButton').innerText = "BRATHA SEND THEM 2-3 YEARS DAGESTAN AND FORGET🏔🤼🐻 (5,000 pesos)";
     };
+
+    let blackJackPurchased = false;
+
+    function buyBlackJack(){
+        if(crashPurchased == true && variable > 34999){
+            variable -= 35000;
+            blackJackPurchased = true;
+            document.getElementById('betDisplayBJ').innerText = "Bet: 0";
+            document.getElementById('setBetButtonBJ').innerText = "Set Bet💰";
+
+document.getElementById('startBjButton').innerText = "Start🃏";
+            document.getElementById('hitButton').innerText = "Hit💥";
+            document.getElementById('standButton').innerText = "Stand🛡️";
+            document.getElementById('buyBlackJackButton').style.display = "none";
+        };
+    };
     
+    let deck = [
+      // Spades
+      "🂡", "🂢", "🂣", "🂤", "🂥", "🂦", "🂧", "🂨", "🂩", "🂪", "🂫", "🂭", "🂮",
+      // Hearts
+      "🂱", "🂲", "🂳", "🂴", "🂵", "🂶", "🂷", "🂸", "🂹", "🂺", "🂻", "🂽", "🂾",
+      // Diamonds
+      "🃁", "🃂", "🃃", "🃄", "🃅", "🃆", "🃇", "🃈", "🃉", "🃊", "🃋", "🃍", "🃎",
+      // Clubs
+      "🃑", "🃒", "🃓", "🃔", "🃕", "🃖", "🃗", "🃘", "🃙", "🃚", "🃛", "🃝", "🃞"
+    ];
+
+    const cardValues = {
+        // Spades
+      "🂡": 11, "🂢": 2, "🂣": 3, "🂤": 4, "🂥": 5, "🂦": 6, "🂧": 7, "🂨": 8, "🂩": 9, "🂪": 10, "🂫": 10, "🂭": 10, "🂮": 10,
+      // Hearts
+      "🂱": 11, "🂲": 2, "🂳": 3, "🂴": 4, "🂵": 5, "🂶": 6, "🂷": 7, "🂸": 8, "🂹": 9, "🂺": 10, "🂻": 10, "🂽": 10, "🂾": 10,
+      // Diamonds
+      "🃁": 11, "🃂": 2, "🃃": 3, "🃄": 4, "🃅": 5, "🃆": 6, "🃇": 7, "🃈": 8, "🃉": 9, "🃊": 10, "🃋": 10, "🃍": 10, "🃎": 10,
+      // Clubs
+      "🃑": 11, "🃒": 2, "🃓": 3, "🃔": 4, "🃕": 5, "🃖": 6, "🃗": 7, "🃘": 8, "🃙": 9, "🃚": 10, "🃛": 10, "🃝": 10, "🃞": 10
+    };
+
+    let blackJackBet = 0;
+
+    let dealerAceCount = 0;
+    let cardValue;
+    let cardValue2;
+    let dynamicCardValue;
+    let combinedValue;
+
+    let playerAceCount = 0;
+    let playerCardValue;
+    let playerCardValue2;
+    let dynamicPlayerCardValue;
+    let playerCombinedValue
+
+    let playerHand = [];
+    let dealerHand = [];
+    
+    const blankCard = "🂠";
+
+    const betDisplayBJ = document.getElementById('betDisplayBJ');
+
+    function resetDeck(){
+        deck = [
+          // Spades
+          "🂡", "🂢", "🂣", "🂤", "🂥", "🂦", "🂧", "🂨", "🂩", "🂪", "🂫", "🂭", "🂮",
+          // Hearts
+          "🂱", "🂲", "🂳", "🂴", "🂵", "🂶", "🂷", "🂸", "🂹", "🂺", "🂻", "🂽", "🂾",
+          // Diamonds
+          "🃁", "🃂", "🃃", "🃄", "🃅", "🃆", "🃇", "🃈", "🃉", "🃊", "🃋", "🃍", "🃎",
+          // Clubs
+          "🃑", "🃒", "🃓", "🃔", "🃕", "🃖", "🃗", "🃘", "🃙", "🃚", "🃛", "🃝", "🃞"
+        ];
+
+        playerHand = [];
+        dealerHand = [];
+        playerAceCount = 0;
+        dealerAceCount = 0;
+        blackJackBet = 0;
+        document.getElementById('betDisplayBJ').innerText = "Bet: 0";
+        
+    };
+
+    function setBetBlackJack(){
+        blackJackBet = prompt("How much ya wanna bet bubba?? (type a to go all in)");
+        if (blackJackBet > variable){
+            blackJackBet = 0;
+            document.getElementById('betDisplayBJ').innerText = "Bet: " + blackJackBet;
+        } else if(blackJackBet == 'a'){
+            blackJackBet = variable;
+            document.getElementById('betDisplayBJ').innerText = "Bet: " + blackJackBet;
+        } else if(blackJackBet < 0){
+            blackJackBet = 0;
+            document.getElementById('betDisplayBJ').innerText = "Bet: " + blackJackBet;
+        } else{
+            document.getElementById('betDisplayBJ').innerText = "Bet: " + blackJackBet;
+        };
+        blackJackBet = Number(blackJackBet);
+    };
+
+    function startBlackJack(){
+        let index = Math.floor(Math.random() * deck.length);
+        let randomCard = deck.splice(index, 1)[0];
+        cardValue = cardValues[randomCard];
+        dealerHand.push(cardValue);
+        if(cardValue == 11){
+            dealerAceCount += 1;
+        };
+        document.getElementById('dealersHand').innerText = randomCard;
+        
+        index = Math.floor(Math.random() * deck.length);
+        randomCard = deck.splice(index, 1)[0];
+        hiddenCard = randomCard;
+        cardValue = cardValues[randomCard];
+        dealerHand.push(cardValue);
+        if(cardValue == 11){
+            dealerAceCount += 1;
+        };
+        document.getElementById('dealersHand').innerText += blankCard;
+        
+        document.getElementById('combinedCardValueDealer').innerText = "??";
+
+        combinedValue = dealerHand.reduce((total, val) => total + val, 0);
+        if(combinedValue == 21){
+            showDealersHand();
+            alert("DEALER BLACKJACK!");
+
+            blackJackBet *= 1.5;
+            variable -= blackJackBet;
+            variable -= 1;
+            updateEngine();
+
+            if(variable < 0){
+                variable += blackJackBet;
+                variable -= 1;
+                updateEngine();
+                mayDay();
+            };
+            
+            blackJackBet = 0;
+        };
+        
+        if (combinedValue == 22){
+                combinedValue -= 10;
+                dealerAceCount -= 1;
+        };
+        
+
+        
+        //PLAYER CARDS SECTION
+        index = Math.floor(Math.random() * deck.length);
+        randomCard = deck.splice(index, 1)[0];
+        playerCardValue = cardValues[randomCard];
+        playerHand.push(playerCardValue);
+        if(playerCardValue == 11){
+            playerAceCount += 1;
+        };
+        document.getElementById('playersHand').innerText = randomCard;
+
+        index = Math.floor(Math.random() * deck.length);
+        randomCard = deck.splice(index, 1)[0];
+        playerCardValue = cardValues[randomCard];
+        playerHand.push(playerCardValue);
+
+        if(playerCardValue == 11){
+            playerAceCount += 1;
+        };
+        document.getElementById('playersHand').innerText += randomCard;
+
+        playerCombinedValue = playerHand.reduce((total, val) => total + val, 0);
+
+        if (playerCombinedValue == 22){
+                playerCombinedValue -= 10;
+                playerAceCount -= 1;
+        };
+
+        if(playerCombinedValue == 21){
+            alert("BLACKJACK!");
+            blackJack();
+        };
+
+        document.getElementById('combinedCardValue').innerText = playerCombinedValue;  
+    };
+
+    function showDealersHand(){
+        document.getElementById('dealersHand').innerText = document.getElementById('dealersHand').innerText.replace(blankCard, hiddenCard);
+    };
+    
+    function stand(){
+        showDealersHand();
+        
+        setTimeout(() => {
+            dealerTurn(); 
+        }, 1000);
+    }
+
+    function dealerTurn() {
+        if (combinedValue < 17) {
+            let index = Math.floor(Math.random() * deck.length);
+            let randomCard = deck.splice(index, 1)[0];
+            
+            let val = cardValues[randomCard];
+            dealerHand.push(val);
+            if(val == 11) dealerAceCount += 1;
+    
+            // Update total using reduce
+            combinedValue = dealerHand.reduce((total, val) => total + val, 0);
+    
+            // Dealer Ace Check
+            if (combinedValue > 21 && dealerAceCount > 0) {
+                combinedValue -= 10;
+                dealerAceCount -= 1;
+            }
+    
+            document.getElementById('dealersHand').innerText += randomCard;
+            document.getElementById('combinedCardValueDealer').innerText = combinedValue;
+    
+            if (combinedValue > 21) {
+                setTimeout(dealerBust, 500);
+                return;
+            }
+            setTimeout(dealerTurn, 500); 
+        } else {
+            setTimeout(compareScores, 500);
+        }
+    }
+
+    
+    function compareScores() {
+        if (playerCombinedValue > combinedValue) {
+            alert("YOU WIN!");
+            variable += blackJackBet;
+            variable -= 1;
+            updateEngine();
+            resetDeck();
+        } else {
+            alert("YOU LOSE!");
+            variable -= blackJackBet;
+            variable -= 1;
+            updateEngine();
+            resetDeck();
+        }
+        
+        cardValue = 0;
+        cardValue2 = 0;
+        dynamicCardValue = 0;
+        combinedValue = 0;
+    
+        playerCardValue = 0;
+        playerCardValue2 = 0;
+        dynamicPlayerCardValue = 0;
+        playerCombinedValue = 0;
+
+        document.getElementById('playersHand').innerText = "";
+        document.getElementById('dealersHand').innerText = "";
+        document.getElementById('combinedCardValue').innerText = "";
+        document.getElementById('combinedCardValueDealer').innerText = "";
+    };
+
+
+    function hit(){
+        if(playerCombinedValue < 21){
+            let index = Math.floor(Math.random() * deck.length);
+            let randomCard = deck.splice(index, 1)[0];
+            dynamicPlayerCardValue = cardValues[randomCard];
+            playerHand.push(dynamicPlayerCardValue);
+
+            if (dynamicPlayerCardValue === 11) {
+                playerAceCount += 1;
+            }
+
+            
+            playerCombinedValue = playerHand.reduce((total, val) => total + val, 0);
+            document.getElementById('playersHand').innerText += randomCard;
+
+            if (playerCombinedValue > 21 && playerAceCount > 0){
+                playerCombinedValue -= 10;
+                playerAceCount -= 1;
+            };
+
+            document.getElementById('combinedCardValue').innerText = playerCombinedValue;
+            
+            if(playerCombinedValue > 21){bust();};
+            if(playerCombinedValue == 21){immediateWin();};
+        };
+    };
+
+    function immediateWin(){
+        alert("YOU WIN!");
+        variable += blackJackBet;
+        variable -= 1;
+        updateEngine();
+        resetDeck();
+        cardValue = 0;
+        cardValue2 = 0;
+        dynamicCardValue = 0;
+        combinedValue = 0;
+    
+        playerCardValue = 0;
+        playerCardValue2 = 0;
+        dynamicPlayerCardValue = 0;
+        playerCombinedValue = 0;
+
+        document.getElementById('playersHand').innerText = "";
+        document.getElementById('dealersHand').innerText = "";
+        document.getElementById('combinedCardValue').innerText = "";
+        document.getElementById('combinedCardValueDealer').innerText = "";
+
+
+    };
+
+    function blackJack(){
+        alert("BLACK JACK! YOU WIN!");
+        blackJackBet *= 1.5;
+        variable += blackJackBet;
+        variable -= 1;
+        updateEngine();
+        resetDeck();
+        cardValue = 0;
+        cardValue2 = 0;
+        dynamicCardValue = 0;
+        combinedValue = 0;
+    
+        playerCardValue = 0;
+        playerCardValue2 = 0;
+        dynamicPlayerCardValue = 0;
+        playerCombinedValue = 0;
+
+        document.getElementById('playersHand').innerText = "";
+        document.getElementById('dealersHand').innerText = "";
+        document.getElementById('combinedCardValue').innerText = "";
+        document.getElementById('combinedCardValueDealer').innerText = "";
+
+    };
+
+    function bust(){
+        alert("BUST!");
+        variable -= blackJackBet;
+        variable -= 1;
+        updateEngine();
+        resetDeck();
+        cardValue = 0;
+        cardValue2 = 0;
+        dynamicCardValue = 0;
+        combinedValue = 0;
+    
+        playerCardValue = 0;
+        playerCardValue2 = 0;
+        dynamicPlayerCardValue = 0;
+        playerCombinedValue = 0;
+
+        document.getElementById('playersHand').innerText = "";
+        document.getElementById('dealersHand').innerText = "";
+        document.getElementById('combinedCardValue').innerText = "";
+        document.getElementById('combinedCardValueDealer').innerText = "";
+
+        
+    };
+
+    function dealerBust(){
+        alert("DEALER BUST!");
+        variable += blackJackBet;
+        variable -= 1;
+        updateEngine();
+        resetDeck();
+        cardValue = 0;
+        cardValue2 = 0;
+        dynamicCardValue = 0;
+        combinedValue = 0;
+    
+        playerCardValue = 0;
+        playerCardValue2 = 0;
+        dynamicPlayerCardValue = 0;
+        playerCombinedValue = 0;
+
+        document.getElementById('playersHand').innerText = "";
+        document.getElementById('dealersHand').innerText = "";
+        document.getElementById('combinedCardValue').innerText = "";
+        document.getElementById('combinedCardValueDealer').innerText = "";
+
+        variable += blackJackBet;
+        variable -= 1;
+        updateEngine();
+    };
 </script>
     
 <div class="game-container">
@@ -513,6 +904,21 @@
             background: #ef4444;
         }
 
+        #hitButton {
+            background-color: #2ecc71;
+        }
+
+        #standButton {
+            background-color: #e74c3c;
+        }
+
+        #setBetButtonBJ {
+            background-color: #f1c40f;
+        }
+
+        #startBjButton {
+            background-color: #3498db;
+        }
 
     </style>
 
@@ -578,6 +984,37 @@
             <button id="crashStopButton" onclick="stopTickerPositive();">LOCKED 🔒</button>
 
         </div>
+
+        <div style="height: 75px;"></div>
+        
+        <h1 id="blackJackLabel">LOCKED 🔒</h1>
+        <button id="buyBlackJackButton" class="btn" onclick="buyBlackJack();">LOCKED 🔒</button>
+        <h1 id="betDisplayBJ" style="font-size: 1.2rem;">LOCKED🔒</h1>
+        
+        <h1 id="combinedCardValueDealer"></h1>
+        <h1 id="dealersHand" style="font-size: 8rem; font-weight: normal; margin-bottom: -5px; gap: -5px;"></h1>
+        <h1 id="playersHand" style="font-size: 8rem; font-weight: normal; margin-bottom: -5px; gap: -5px;"></h1>
+        <h1 id="combinedCardValue"></h1>
+        <button id="setBetButtonBJ" onclick="
+            if(blackJackPurchased == true){
+                setBetBlackJack();
+            };"
+            >LOCKED 🔒Setbet</button>
+        <button id="startBjButton" onclick="
+            if(blackJackPurchased == true){
+                startBlackJack();
+            };
+            ">LOCKED 🔒Start</button>
+        <button id="hitButton" onclick="
+            if(blackJackPurchased == true){
+                hit();
+            };">LOCKED 🔒Hit</button>
+        <button id="standButton" onclick="
+            if(blackJackPurchased == true){
+                stand();
+            };
+            ">LOCKED 🔒Stand</button>
+        
     </div>
 </div>
 
