@@ -748,10 +748,6 @@
         document.getElementById('dealersHand').innerText = "";
         document.getElementById('combinedCardValue').innerText = "";
         document.getElementById('combinedCardValueDealer').innerText = "";
-
-        variable += blackJackBet;
-        variable -= 1;
-        updateEngine();
     };
 
 
@@ -770,6 +766,7 @@
     let dealerpowerIndex = 0;
     let hpc1 = 0;
     let hpc2 = 0;
+    let pokerBet = 0;
     
     let pokerDeck = [
       // Spades
@@ -802,6 +799,7 @@
         dealerpowerIndex = 0;
         hpc1 = 0;
         hpc2 = 0;
+        pokerBet = 0;
 
         pokerDeck = [
           // Spades
@@ -815,63 +813,76 @@
         ];
         document.getElementById('river').innerText = "";
         document.getElementById('pokerHand').innerText = "";
+
+        startPokerButton.disabled = true;
+        checkPoker.disabled = true;
+        betMorePoker.disabled = true;
+        setBetPoker.disabled = false;
     };
     
     function buyPoker(){
-        if(variable > 49999){
+        if(variable > 49999 && crashPurchased == true){
             variable -= 50000
             pokerPurchased = true;
+            document.getElementById('buyPokerButton').style.display = "none";
+            startPokerButton.disabled = true;
+            checkPoker.disabled = true;
+            betMorePoker.disabled = true;
         };
     };
 
     function startPoker(){
         let index = Math.floor(Math.random() * pokerDeck.length);
-        let randomCard = deck.splice(index, 1)[0];
+        let randomCard = pokerDeck.splice(index, 1)[0];
         let cardValue = cardValuesPoker[randomCard];
         pokerHand.push(cardValue);
-
+        
         document.getElementById('pokerHand').innerText += randomCard;
 
-        index = Math.floor(Math.random() * deck.length);
-        randomCard = deck.splice(index, 1)[0];
+        index = Math.floor(Math.random() * pokerDeck.length);
+        randomCard = pokerDeck.splice(index, 1)[0];
         cardValue = cardValuesPoker[randomCard];
         pokerHand.push(cardValue);
 
         document.getElementById('pokerHand').innerText += randomCard;
 
-        index = Math.floor(Math.random() * deck.length);
-        randomCard = deck.splice(index, 1)[0];
+        index = Math.floor(Math.random() * pokerDeck.length);
+        randomCard = pokerDeck.splice(index, 1)[0];
         hpc1 = randomCard;
         cardValue = cardValuesPoker[randomCard];
         pokerHandDealer.push(cardValue);
 
-        index = Math.floor(Math.random() * deck.length);
-        randomCard = deck.splice(index, 1)[0];
+        index = Math.floor(Math.random() * pokerDeck.length);
+        randomCard = pokerDeck.splice(index, 1)[0];
         hpc2 = randomCard;
         cardValue = cardValuesPoker[randomCard];
         pokerHandDealer.push(cardValue);
+
+        setBetPoker.disabled = true;
+        checkPoker.disabled = false;
+        betMorePoker.disabled = false;
     };
 
     function checkPoker(){
         
         if(pokerRound == 0){
-        let index = Math.floor(Math.random() * deck.length);
-        let randomCard = deck.splice(index, 1)[0];
+        let index = Math.floor(Math.random() * pokerDeck.length);
+        let randomCard = pokerDeck.splice(index, 1)[0];
         let cardValue = cardValuesPoker[randomCard];
         river.push(cardValue);
 
         document.getElementById('river').innerText += randomCard;
 
-        index = Math.floor(Math.random() * deck.length);
-        randomCard = deck.splice(index, 1)[0];
+        index = Math.floor(Math.random() * pokerDeck.length);
+        randomCard = pokerDeck.splice(index, 1)[0];
         cardValue = cardValuesPoker[randomCard];
         river.push(cardValue);
 
         document.getElementById('river').innerText += randomCard;
 
 
-        index = Math.floor(Math.random() * deck.length);
-        randomCard = deck.splice(index, 1)[0];
+        index = Math.floor(Math.random() * pokerDeck.length);
+        randomCard = pokerDeck.splice(index, 1)[0];
         cardValue = cardValuesPoker[randomCard];
         river.push(cardValue);
 
@@ -880,8 +891,8 @@
         pokerRound += 1;
             
         } else if(pokerRound == 1){
-            let index = Math.floor(Math.random() * deck.length);
-            let randomCard = deck.splice(index, 1)[0];
+            let index = Math.floor(Math.random() * pokerDeck.length);
+            let randomCard = pokerDeck.splice(index, 1)[0];
             let cardValue = cardValuesPoker[randomCard];
             river.push(cardValue);
 
@@ -889,15 +900,15 @@
 
             pokerRound += 1;
         } else if(pokerRound == 2){
-            let index = Math.floor(Math.random() * deck.length);
-            let randomCard = deck.splice(index, 1)[0];
+            let index = Math.floor(Math.random() * pokerDeck.length);
+            let randomCard = pokerDeck.splice(index, 1)[0];
             let cardValue = cardValuesPoker[randomCard];
             river.push(cardValue);
     
             document.getElementById('river').innerText += randomCard;
     
             pokerRound += 1;
-
+        } else if(pokerRound == 3){
             onePairChecker();
             twoPairChecker();
             toakChecker();
@@ -1030,9 +1041,9 @@
         allScores = Object.values(counts);
 
         if(Object.values(counts).some(val => val === 3)){
-            playerPowerIndex = 3;
-            document.getElementById('string1').innerText = "THREE OF A KIND!";
-            toakPresent = true;
+            dealerPowerIndex = 3;
+            document.getElementById('string2').innerText = "THREE OF A KIND!";
+            toakPresentDealer = true;
         } 
 
         toaksFound = allScores.filter(val => val === 3);
@@ -1238,7 +1249,7 @@
                 playerTotal += rankMap[item]
             };
 
-            allCards = pokerHand.concat(river);
+            allCards = pokerHandDealer.concat(river);
             numbers = allCards.map(card => card.slice(0, -1));
             let dealerTotal = 0;
 
@@ -1253,6 +1264,25 @@
             };
             
         };
+    };
+
+    function setBetPoker(){
+        pokerBet = prompt("How much ya wanna bet bubba?? (type a to go all in)");
+        if (pokerBet > variable){
+            pokerBet = 0;
+            document.getElementById('player-chips').innerText = "Bet: " + pokerBet;
+        } else if(blackJackBet == 'a'){
+            pokerBet = variable;
+            startPokerButton.disabled = false;
+            document.getElementById('player-chips').innerText = "Bet: " + pokerBet;
+        } else if(blackJackBet < 0){
+            pokerBet = 0;
+            document.getElementById('player-chips').innerText = "Bet: " + pokerBet;
+        } else{
+            document.getElementById('player-chips').innerText = "Bet: " + pokerBet;
+            startPokerButton.disabled = false;
+        };
+        pokerBet = Number(pokerBet);
     };
 
 </script>
@@ -1455,6 +1485,26 @@
             background-color: #f1c40f;
         }
 
+    .poker-chip {
+        display: inline-flex;
+        align-items: center;
+        background-color: #d40000;
+        color: white;
+        padding: 5px 15px;
+        border-radius: 50px;
+        border: 5px dashed white;
+        font-family: 'Arial', sans-serif;
+        font-weight: bold;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        font-size: 2rem;
+    }
+    
+    .chip-icon {
+      margin-right: 8px;
+      font-size: 2.75rem;
+    }
+
+
     </style>
 
 
@@ -1554,19 +1604,27 @@
         <div style="height: 75px;"></div>
         <h1 id="pokerLabel">♦POKER♦</h1>
         <button id="buyPokerButton" class="btn" onclick="buyPoker();">♦BUY POKER♦(50,000 pesos🫰🤑💰) </button>
-        <h1 id="betDisplayPoker" style="font-size: 1.2rem;">Bet: 0</h1>
-
         <button id="setBetPoker" onclick="
             if(pokerPurchased == true){
                 setBetPoker();
             };"
             >Set Bet💰</button>
+        <div style="height: 15px"></div>
+        <div class="poker-chip">
+            <span class="chip-icon">🪙</span>
+            <span id="player-chips">0</span>
+            <span style="width: 5px"></span>
+        </div>
+        <div style="height: 15px"></div>
+
+        
          <h1 id="dealersHandLabel">Dealer's Hand:</h1>
         <h1 id="dealerHand" style="font-size: 8rem; font-weight: normal; margin-bottom: -5px; gap: -5px;"></h1>
         <h1 id="riverLabel">River:</h1>
         <h1 id="river" style="font-size: 8rem; font-weight: normal; margin-bottom: -5px; gap: -5px;"></h1>
         <h1 id="yourHandLabel">Your Hand:</h1>
         <h1 id="pokerHand" style="font-size: 8rem; font-weight: normal; margin-bottom: -5px; gap: -5px;"></h1>
+
         
         <button id="startPokerButton" onclick="
             if(pokerPurchased == true){
