@@ -702,7 +702,7 @@
     function bust(){
         if(playerAceCount > 0){
             playerAceCount -= 1;
-            playerCombinedTotal -= 10;
+            playerCombinedValue -= 10;
             return;
         };
         alert("BUST!");
@@ -790,7 +790,7 @@
       // Diamonds
       "🃁": "AD", "🃂": "2D", "🃃": "3D", "🃄": "4D", "🃅": "5D", "🃆": "6D", "🃇": "7D", "🃈": "8D", "🃉": "9D", "🃊": "10D", "🃋": "JD", "🃍": "QD", "🃎": "KD",
       // Clubs
-      "🃑": "AC", "🃒": "2C", "🃓": "3C", "🃔": "4C", "🃕": "5C", "🃖": "6C", "🃗": "7C", "🃘": "8C", "🃙": "9C", "🃚": "10C", "🃛": "JC", "🃝": "QC", "🃞": "KD"
+      "🃑": "AC", "🃒": "2C", "🃓": "3C", "🃔": "4C", "🃕": "5C", "🃖": "6C", "🃗": "7C", "🃘": "8C", "🃙": "9C", "🃚": "10C", "🃛": "JC", "🃝": "QC", "🃞": "KC"
     };
 
     function resetPoker(){
@@ -825,7 +825,7 @@
     };
 
     function startPoker(){
-        let index = Math.floor(Math.random() * deck.length);
+        let index = Math.floor(Math.random() * pokerDeck.length);
         let randomCard = deck.splice(index, 1)[0];
         let cardValue = cardValuesPoker[randomCard];
         pokerHand.push(cardValue);
@@ -946,7 +946,7 @@
         if (Object.values(counts).some(val => val === 2)) {
             dealerPowerIndex = 1;
             pairPresentDealer = true;
-            document.getElementById('string2').innerText = "TWO PAIR!";
+            document.getElementById('string2').innerText = "ONE PAIR!";
         }
         
     };
@@ -1245,7 +1245,7 @@
             for(let item of numbers){
                 dealerTotal += rankMap[item]
             };
-
+            
             if(playerTotal > dealerTotal){
                 alert("YOU WON THE POKER MATCH");
             } else{
