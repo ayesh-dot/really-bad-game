@@ -10,7 +10,455 @@
     </style>
 </head>
 <body>
+    
 
+<style>
+            * { box-sizing: border-box; }
+
+        /* 1. Background & Layout */
+    body {
+        background: radial-gradient(circle, #1e293b 0%, #0f172a 100%);
+        font-family:'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        color: white;
+        margin: 0;
+        min-height: 100vh;
+    }
+    
+    /* THE FIX: Apply flex to the container holding the cards */
+    .game-container {
+        display: flex;
+        flex-direction: row;      /* Side-by-side */
+        flex-wrap: wrap;          /* Stacks on mobile */
+        justify-content: center;  /* Centers cards horizontally */
+        align-items: flex-start;  /* Aligns tops of cards */
+        gap: 30px;                /* Space between cards */
+        padding: 40px 20px;
+        width: 100%;
+    }
+    
+    /* 2. Main Dashboard Card (Cleaned up) */
+    .game-card {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(10px);
+        padding: 2rem;
+        border-radius: 24px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        border: 1px solid rgba(255,255,255,0.1);
+        text-align: center;
+        
+        /* Ensure they don't grow too wide to stay side-by-side */
+        width: 100%;
+        max-width: 600px; 
+        flex: 0 1 auto; 
+    }
+
+    .vertical-stack {
+        display: flex;
+        flex-direction: column; /* This container stacks its children */
+        gap: 20px;
+    }
+
+        /* 3. Typography */
+        h1, h2, p { margin: 10px 0; }
+        .pesos-display {
+            font-size: 2.5rem;
+            color: #4ade80; /* Money Green */
+            text-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
+        }
+        
+        .multiplier {
+            font-size: 3.5rem;
+            color: #38bdf8;
+            font-weight: 800;
+        }
+
+        /* 4. The Giant Clicky Button */
+        #clickButton {
+            background: linear-gradient(135px, #6366f1, #a855f7);
+            font-size: 1.5rem !important;
+            padding: 30px !important;
+            border-radius: 50% !important;
+            width: 150px !important;
+            height: 150px !important;
+            margin: 20px auto !important;
+            display: block;
+            border: 4px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        #clickButton:hover {
+            transform: scale(1.05); /* Grows just a tiny bit */
+            filter: brightness(1.5); /* Lights up slightly */
+            transition: all 0.2s ease;
+        }
+
+        /* 5. General Buttons */
+        .btn, button {
+            width: 100%;
+            padding: 14px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.4s;
+            color: white;
+            background: #334155; /* Default gray-blue */
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            filter: brightness(1.2);
+        }
+
+        button:active:not(:disabled) { transform: scale(0.95); }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Specific Colors */
+        #ILIKEMONEY { background: #eab308; color: #000; } /* Gold */
+        #buyWorkerButton { background: #22c55e; }
+        #makeWorkersWorkButton { background: #3b82f6; }
+        #crashStartButton { background: #10b981; }
+        #crashStopButton { background: #ef4444; }
+        #setBetButton { background: #8b5cf6; }
+        #hideLockedButton {
+            transform: translateX(15px);
+        }
+        #secondSetting {
+            transform: translateX(15px);
+        }
+        #settingsButton {
+            padding: 16px;
+            font-size: 1.5rem;
+        }
+
+        #settingSection {
+            max-height: 0;
+            overflow: hidden;
+
+            transition: max-height 0.35s ease-out;
+
+                position: relative; 
+        }
+
+        #settingSection.expanded {
+            max-height: 200px;
+        }
+
+        #settingSection::before {
+            content: "";          /* Required: This tells CSS to 'create' the shape */
+            position: absolute;   /* Let us place it anywhere */
+            top: 0;               /* Start at the top of the section */
+            left: 15px;           /* Adjust this to line up with your Settings button center */
+            width: 15px;           /* The thickness of the line */
+            height: 100%;         /* Stretches to the bottom of the section */
+            background: rgba(255, 255, 255, 0.3); /* Subtle white color */
+        }
+
+        #settingsButton:hover {
+            transform: scale(1.05); /* Grows just a tiny bit */
+            filter: brightness(1.5); /* Lights up slightly */
+            transition: all 0.2s ease;
+        }
+
+        #timerBar {
+            display: block;
+            height: 10px;
+            max-width: 550px;
+            width: 100%;
+            background: #ef4444;
+        }
+
+        #hitButton {
+            background-color: #2ecc71;
+        }
+
+        #standButton {
+            background-color: #e74c3c;
+        }
+
+        #setBetButtonBJ {
+            background-color: #f1c40f;
+        }
+
+        #startBjButton {
+            background-color: #3498db;
+        }
+
+        #betMorePoker {
+            background-color: #2ecc71;
+        }
+
+        #checkPokerButton {
+            background-color: #e74c3c;
+        }
+            
+        #startPokerButton {
+            background-color: #3498db;
+        }
+
+        #setBetPoker {
+            background-color: #f1c40f;
+        }
+
+    .poker-chip {
+        display: inline-flex;
+        align-items: center;
+        background-color: #d40000;
+        color: white;
+        padding: 5px 15px;
+        border-radius: 50px;
+        border: 5px dashed white;
+        font-family: 'Arial', sans-serif;
+        font-weight: bold;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        font-size: 2rem;
+    }
+    
+    .chip-icon {
+      margin-right: 8px;
+      font-size: 2.75rem;
+    }
+
+    #minesGrid{
+        display: grid;
+
+        grid-template-columns: 100px 100px 100px 100px 100px;
+        grid-template-rows: 100px 100px 100px 100px 100px;
+
+        justify-content: center;
+    }
+
+    .tile{
+        width: 90px;
+        height: 90px;
+        font-size: 2rem;
+    };
+
+dialog { background: #333; color: white; border: 2px solid gold; border-radius: 15px; padding: 25px; box-shadow: 0 0 50px black; }
+
+
+
+    #minesMultiplier {
+        color: #38bdf8;
+        font-weight: bold;
+        display: inline-block;
+        /* This keeps it from flickering or jumping */
+        text-shadow: 0 0 4px rgba(56, 189, 248, 0.4); 
+    }
+    
+    @keyframes subtlePulse {
+        0% { transform: scale(1); }
+        50% { 
+            transform: scale(1.1); /* Much smaller pop */
+            text-shadow: 0 0 12px #38bdf8; /* Softer glow */
+        }
+        100% { transform: scale(1); }
+    }
+    
+    .glow-active {
+        animation: subtlePulse 0.3s ease-out;
+    }
+
+
+
+
+
+
+    </style>
+
+    <div class="game-container">
+
+    <div id="verticalStack1" class="vertical-stack">
+        <div id="settingsDashboard" class="game-card">
+            <button id="settingsButton" onclick="toggleSettings();">Settings⚙</button>
+                <div id="settingSection" class="settingSectionClass">
+                    <button id="hideLockedButton" style="width: auto; padding: 12px 165px; font-size: 0.8rem;" onclick="">Hide Locked🔒: ❌</button>
+                    <button id="secondSetting" style="width: auto; padding: 12px 185px; font-size: 0.8rem;" onclick="">setting two</button>
+                </div>
+        </div>
+        <div id="dashboard3" class="game-card">
+            <h1 id="loanDashboard">LOANS🏦</h1>
+            <h2 >TAKE OUT A LOAN:</h2>
+            <input id="loanAmountInput" type="number" placeholder="Loan Amount (e.g. 10000)">
+            <input id="loanLengthInput" type="number" placeholder="Loan Length (10-180 seconds)" style="margin-bottom: 8px;">
+            <button id="calculateInterest" onclick="calculateInterest();">Calculate Interest</button>
+            <h2 id="maxLoanLabel">Max Loan: 0</h2>
+            <h2 id="interestLabel">Debt With Interest: 0</h2>
+            <button id="takeOutLoanButton" onclick="takeOutLoan();">Take Out Loan</button>
+            <button id="timerBar">
+            <button id="payDebtButton" onclick="payDebt();">Pay Your Debt</button>
+        </div>
+    </div>
+
+    
+    
+    <div class="game-card">
+        <p style="font-size: 1.2rem; font-style: italic; opacity: 0.8;">Welcome to my silly game :)</p>
+        
+        <button id="ILIKEMONEY" onclick="ilikemoney();">🤑 100000000 money</button>
+        
+        <h1 id="updateTs" class="pesos-display">pesos🤑: 0</h1>
+        
+        <button id="clickButton" onclick="updateEngine()">CLICK!</button>
+
+        <h2 id="workersOwnedId" style="font-size: 1rem;">Workers Owned🧑🏽‍🌾: 0</h2>
+        
+        <button class="btn" id="buyWorkerButton" onclick="buyWorker()">Buy Worker (10 pesos🫰)</button>
+        
+        <button class="btn" id="makeWorkersWorkButton" onclick="
+            this.disabled = true;
+            this.innerText = 'Wait 3s';
+            setTimeout(() => this.innerText = 'Wait 2s', 1000);
+            setTimeout(() => this.innerText = 'Wait 1s', 2000);
+            setTimeout(() => { this.innerText = 'Start Working ⛏'; this.disabled = false; }, 3000);
+            makeWorkersWork()">Start Working ⛏</button>
+
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
+
+        <h2 id="specialUpgradeLabel" style="font-size: 0.9rem; opacity: 0.6;">SPECIAL UPGRADE: LOCKED🔒</h2>
+        <button class="btn" id="dagestanUpgradeButton" onclick="buyDagestanUpgrade();">LOCKED🔒</button>
+        
+        <h2 id="sectionTwoLabel" style="font-size: 0.9rem; opacity: 0.6;">SECTION 2: LOCKED🔒</h2>
+        <button class="btn" id="buyCrashButton" onclick="buyCrash()">LOCKED🔒</button>
+        
+        <div id="crash-section">
+            <h1 id="betDisplay" style="font-size: 1.2rem;">LOCKED🔒</h1>
+            <h1 id="multiplierDisplay" class="multiplier">LOCKED🔒</h1>
+            <button id="setBetButton" onclick="setBet();">LOCKED 🔒</button>
+            <button id="crashStartButton" onclick="startCrash();">LOCKED 🔒</button>
+            <button id="crashStopButton" onclick="stopTickerPositive();">LOCKED 🔒</button>
+
+        </div>
+
+        <div style="height: 75px;"></div>
+        
+        <h1 id="blackJackLabel" class="multiplier">LOCKED 🔒</h1>
+        <button id="buyBlackJackButton" class="btn" onclick="buyBlackJack();">LOCKED 🔒</button>
+        <h1 id="betDisplayBJ" style="font-size: 1.2rem;">LOCKED🔒</h1>
+        
+        <h1 id="combinedCardValueDealer"></h1>
+        <h1 id="dealersHand" style="font-size: 8rem; font-weight: normal; margin-bottom: -5px; gap: -5px;"></h1>
+        <h1 id="playersHand" style="font-size: 8rem; font-weight: normal; margin-bottom: -5px; gap: -5px;"></h1>
+        <h1 id="combinedCardValue"></h1>
+        <button id="setBetButtonBJ" onclick="
+            if(blackJackPurchased == true){
+                setBetBlackJack();
+            };"
+            >LOCKED 🔒</button>
+        <button id="startBjButton" onclick="
+            if(blackJackPurchased == true){
+                startBlackJack();
+                this.disabled = true;
+            };
+            ">LOCKED 🔒</button>
+        <button id="hitButton" onclick="
+            if(blackJackPurchased == true){
+                hit();
+            };">LOCKED 🔒</button>
+        <button id="standButton" onclick="
+            if(blackJackPurchased == true){
+                stand();
+            };
+            ">LOCKED 🔒</button>
+
+        <div style="height: 75px;"></div>
+        <h1 id="pokerLabel" class="multiplier">LOCKED 🔒</h1>
+        <button id="buyPokerButton" class="btn" onclick="buyPoker();">LOCKED 🔒</button>
+        <button id="setBetPoker" onclick="
+            if(pokerPurchased == true){
+                setBetPoker();
+            };"
+            >LOCKED 🔒</button>
+        <div style="height: 15px"></div>
+        <div class="poker-chip" id="betDisplayPoker" style="display: none;">
+            <span class="chip-icon">🪙</span>
+            <span id="player-chips">0</span>
+            <span style="width: 5px"></span>
+        </div>
+        <div style="height: 15px"></div>
+
+        
+         <h1 id="dealersHandLabel"></h1>
+        <h1 id="dealerHand" style="font-size: 8rem; font-weight: normal; margin-bottom: -5px; gap: -5px;"></h1>
+        <h1 id="riverLabel"></h1>
+        <h1 id="river" style="font-size: 8rem; font-weight: normal; margin-bottom: -5px; gap: -5px;"></h1>
+        <h1 id="yourHandLabel"></h1>
+        <h1 id="pokerHand" style="font-size: 8rem; font-weight: normal; margin-bottom: -5px; gap: -5px;"></h1>
+
+        
+        <button id="startPokerButton" onclick="
+            if(pokerPurchased == true){
+                startPoker();
+                this.disabled = true;
+            };
+            ">LOCKED 🔒</button>
+        
+        <button id="checkPokerButton" onclick="
+            if(pokerPurchased == true){
+                checkPoker();
+            };">LOCKED 🔒</button>
+
+        <button id="betMorePoker" onclick="
+            if(pokerPurchased == true){
+                betMorePoker();
+            };">LOCKED 🔒</button>
+        <div style="margin: 40px;"></div>
+            <h1 id="finalHands" style="margin: 10px;"></h1>
+            <h2 style="margin: 0px;">
+                <span id="playerFinal"></span>
+                <span id="string1"></span>
+            </h2>
+            <h2 style="margin: 0px;">
+                <span id="dealersFinal"></span>
+                <span id="string2"></span>
+            </h2>
+
+
+        <button id="setBetMines" onclick="setBetMines();">Set Bet💰</button>
+        <button onclick="generateMines(); openDialog();"> open dialog</button>
+        <dialog id="bettingDialog">
+            <h1 class="multiplier" id="minesMultiplier">0.97x</h1>
+            <div id="minesGrid">
+                <button class="tile" id="tile-1" onclick="checkTile(1, this)"></button>
+                <button class="tile" id="tile-2" onclick="checkTile(2, this)"></button>
+                <button class="tile" id="tile-3" onclick="checkTile(3, this)"></button>
+                <button class="tile" id="tile-4" onclick="checkTile(4, this)"></button>
+                <button class="tile" id="tile-5" onclick="checkTile(5, this)"></button>
+                <button class="tile" id="tile-6" onclick="checkTile(6, this)"></button>
+                <button class="tile" id="tile-7" onclick="checkTile(7, this)"></button>
+                <button class="tile" id="tile-8" onclick="checkTile(8, this)"></button>
+                <button class="tile" id="tile-9" onclick="checkTile(9, this)"></button>
+                <button class="tile" id="tile-10" onclick="checkTile(10, this)"></button>
+                <button class="tile" id="tile-11" onclick="checkTile(11, this)"></button>
+                <button class="tile" id="tile-12" onclick="checkTile(12, this)"></button>
+                <button class="tile" id="tile-13" onclick="checkTile(13, this)"></button>
+                <button class="tile" id="tile-14" onclick="checkTile(14, this)"></button>
+                <button class="tile" id="tile-15" onclick="checkTile(15, this)"></button>
+                <button class="tile" id="tile-16" onclick="checkTile(16, this)"></button>
+                <button class="tile" id="tile-17" onclick="checkTile(17, this)"></button>
+                <button class="tile" id="tile-18" onclick="checkTile(18, this)"></button>
+                <button class="tile" id="tile-19" onclick="checkTile(19, this)"></button>
+                <button class="tile" id="tile-20" onclick="checkTile(20, this)"></button>
+                <button class="tile" id="tile-21" onclick="checkTile(21, this)"></button>
+                <button class="tile" id="tile-22" onclick="checkTile(22, this)"></button>
+                <button class="tile" id="tile-23" onclick="checkTile(23, this)"></button>
+                <button class="tile" id="tile-24" onclick="checkTile(24, this)"></button>
+                <button class="tile" id="tile-25" onclick="checkTile(25, this)"></button>
+            </div>
+            <button onclick="document.getElementById('bettingDialog').close()" style="background: #f44336; color: white;">Cancel</button>
+        </dialog>
+        
+    </div>
+</div>
 
 <script>
 
@@ -832,6 +1280,9 @@
           "🃑", "🃒", "🃓", "🃔", "🃕", "🃖", "🃗", "🃘", "🃙", "🃚", "🃛", "🃝", "🃞"
         ];
 
+        document.getElementById('playerFinal').innerText = "Your Final Hand:";
+        document.getElementById('dealersFinal').innerText = "Dealer's Final Hand:";
+
         startPokerButton.disabled = true;
         checkPokerButton.disabled = true;
         betMorePoker.disabled = true;
@@ -956,6 +1407,7 @@
             foakChecker();
             alternativeFlushChecker();
             comparePokerHands();
+            pokerRound += 1;
         };
     };
 
@@ -1214,7 +1666,7 @@
 
     function fullHouseChecker(){
         if (pairPresent == true && toakPresent == true){
-            playerPowerIndex = 6
+            playerPowerIndex = 6;
             document.getElementById('string1').innerText = "FULL HOUSE!";
         };
 
@@ -1223,7 +1675,7 @@
 
         
         if (pairPresentDealer == true && toakPresentDealer == true){
-            dealerPowerIndex = 6
+            dealerPowerIndex = 6;
             document.getElementById('string2').innerText = "FULL HOUSE!";
         };
     };
@@ -1275,13 +1727,17 @@
     function comparePokerHands(){
         if(playerPowerIndex > dealerPowerIndex){
             alert("YOU WON THE POKER MATCH");
-            variable += pokerBet
+            variable += pokerBet;
+            variable -= 1;
+            updateEngine();
             resetPoker();
         }else if(dealerPowerIndex > playerPowerIndex){
             alert("YOU LOST THE POKER MATCH");
-            variable -= pokerBet
+            variable -= pokerBet;
+            variable -= 1;
+            updateEngine();
             resetPoker();
-        } else{
+        } else if(dealerPowerIndex == playerPowerIndex){
             
             let allCards = pokerHand.concat(river);
             let numbers = allCards.map(card => card.slice(0, -1));
@@ -1301,18 +1757,25 @@
             
             if(playerTotal > dealerTotal){
                 alert("YOU WON THE POKER MATCH");
-                variable += pokerBet
+                variable += pokerBet;
+                variable -= 1;
+                updateEngine();
                 resetPoker();
             } else{
                 alert("YOU LOST THE POKER MATCH");
-                variable -= pokerBet
+                variable -= pokerBet;
+                variable -= 1;
+                updateEngine();
                 resetPoker();
             };
             
+        } else{
+            alert("ts tweaking");
         };
     };
 
     function setBetPoker(){
+        resetPoker();
         pokerBet = prompt("How much ya wanna bet bubba?? (type a to go all in)");
         if (pokerBet > variable){
             pokerBet = 0;
@@ -1332,7 +1795,7 @@
         pokerBet = Number(pokerBet);
     };
 
-    function betMorePoker() {
+    function betMorePoker(){
         let input = prompt("How much ya wanna increase bet by bubba??");
         let increase = Number(input);
     
@@ -1346,378 +1809,62 @@
         } else {
             pokerBet += increase;
             document.getElementById('player-chips').innerText = "Bet: " + pokerBet;
-            document.getElementById('startPokerButton').disabled = false;
         }
     }
+    
+    let minesBet = 0;
+    let tilesClicked = 0;
+    let minesMultiplier = 0.97;
+    let bomb;
 
+    function setBetMines(){
+        minesBet = prompt("How much ya wanna bet bubba?? (type a to go all in)");
+        
+        if (isNaN(minesBet) || minesBet <= 0) {
+            alert("Enter a valid amount, twin.");
+            return;
+        } else{
+            minesBet = Number(minesBet);
+        };
 
+    };
+
+    function generateMines(){
+        let safteyArray = [];
+        bomb = Math.round(Math.random() * 25);
+
+        for(let i = 1; i < 26; i+= 1){
+            if(i == bomb){
+                safteyArray.push(1);
+            } else{
+                safteyArray.push(0);
+            };
+        };
+        alert(safteyArray);
+    };
+
+    const multText = document.getElementById('minesMultiplier');
+
+    function checkTile(index, buttonElement){
+        if(index !== bomb){
+            tilesClicked += 1;
+            minesMultiplier = 25 / (25 - tilesClicked);
+            minesMultiplier *= 0.97;
+            buttonElement.disabled = true;
+            buttonElement.innerText = "💎";
+            document.getElementById('minesMultiplier').innerText = minesMultiplier.toFixed(2) + "x";
+
+            multText.classList.remove('glow-active');
+            void multText.offsetWidth; // This "reflow" is what makes it glow again
+            multText.classList.add('glow-active');
+        } else if(index == bomb){
+            buttonElement.innerText = "💣";
+            buttonElement.disabled = true;
+            buttonElement.style.opacity = "100p%";
+        };
+    };
+
+    function openDialog(){
+        document.getElementById('bettingDialog').showModal();
+    };
 </script>
-    
-<div class="game-container">
-<style>
-            * { box-sizing: border-box; }
-
-        /* 1. Background & Layout */
-    body {
-        background: radial-gradient(circle, #1e293b 0%, #0f172a 100%);
-        font-family:'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        color: white;
-        margin: 0;
-        min-height: 100vh;
-    }
-    
-    /* THE FIX: Apply flex to the container holding the cards */
-    .game-container {
-        display: flex;
-        flex-direction: row;      /* Side-by-side */
-        flex-wrap: wrap;          /* Stacks on mobile */
-        justify-content: center;  /* Centers cards horizontally */
-        align-items: flex-start;  /* Aligns tops of cards */
-        gap: 30px;                /* Space between cards */
-        padding: 40px 20px;
-        width: 100%;
-    }
-    
-    /* 2. Main Dashboard Card (Cleaned up) */
-    .game-card {
-        background: rgba(30, 41, 59, 0.7);
-        backdrop-filter: blur(10px);
-        padding: 2rem;
-        border-radius: 24px;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-        border: 1px solid rgba(255,255,255,0.1);
-        text-align: center;
-        
-        /* Ensure they don't grow too wide to stay side-by-side */
-        width: 100%;
-        max-width: 600px; 
-        flex: 0 1 auto; 
-    }
-
-    .vertical-stack {
-        display: flex;
-        flex-direction: column; /* This container stacks its children */
-        gap: 20px;
-    }
-
-        /* 3. Typography */
-        h1, h2, p { margin: 10px 0; }
-        .pesos-display {
-            font-size: 2.5rem;
-            color: #4ade80; /* Money Green */
-            text-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
-        }
-        
-        .multiplier {
-            font-size: 3.5rem;
-            color: #38bdf8;
-            font-weight: 800;
-        }
-
-        /* 4. The Giant Clicky Button */
-        #clickButton {
-            background: linear-gradient(135px, #6366f1, #a855f7);
-            font-size: 1.5rem !important;
-            padding: 30px !important;
-            border-radius: 50% !important;
-            width: 150px !important;
-            height: 150px !important;
-            margin: 20px auto !important;
-            display: block;
-            border: 4px solid rgba(255,255,255,0.2);
-            cursor: pointer;
-            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        #clickButton:hover {
-            transform: scale(1.05); /* Grows just a tiny bit */
-            filter: brightness(1.5); /* Lights up slightly */
-            transition: all 0.2s ease;
-        }
-
-        /* 5. General Buttons */
-        .btn, button {
-            width: 100%;
-            padding: 14px;
-            margin: 8px 0;
-            border: none;
-            border-radius: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: all 0.4s;
-            color: white;
-            background: #334155; /* Default gray-blue */
-        }
-
-        button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            filter: brightness(1.2);
-        }
-
-        button:active:not(:disabled) { transform: scale(0.95); }
-
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* Specific Colors */
-        #ILIKEMONEY { background: #eab308; color: #000; } /* Gold */
-        #buyWorkerButton { background: #22c55e; }
-        #makeWorkersWorkButton { background: #3b82f6; }
-        #crashStartButton { background: #10b981; }
-        #crashStopButton { background: #ef4444; }
-        #setBetButton { background: #8b5cf6; }
-        #hideLockedButton {
-            transform: translateX(15px);
-        }
-        #secondSetting {
-            transform: translateX(15px);
-        }
-        #settingsButton {
-            padding: 16px;
-            font-size: 1.5rem;
-        }
-
-        #settingSection {
-            max-height: 0;
-            overflow: hidden;
-
-            transition: max-height 0.35s ease-out;
-
-                position: relative; 
-        }
-
-        #settingSection.expanded {
-            max-height: 200px;
-        }
-
-        #settingSection::before {
-            content: "";          /* Required: This tells CSS to 'create' the shape */
-            position: absolute;   /* Let us place it anywhere */
-            top: 0;               /* Start at the top of the section */
-            left: 15px;           /* Adjust this to line up with your Settings button center */
-            width: 15px;           /* The thickness of the line */
-            height: 100%;         /* Stretches to the bottom of the section */
-            background: rgba(255, 255, 255, 0.3); /* Subtle white color */
-        }
-
-        #settingsButton:hover {
-            transform: scale(1.05); /* Grows just a tiny bit */
-            filter: brightness(1.5); /* Lights up slightly */
-            transition: all 0.2s ease;
-        }
-
-        #timerBar {
-            display: block;
-            height: 10px;
-            max-width: 550px;
-            width: 100%;
-            background: #ef4444;
-        }
-
-        #hitButton {
-            background-color: #2ecc71;
-        }
-
-        #standButton {
-            background-color: #e74c3c;
-        }
-
-        #setBetButtonBJ {
-            background-color: #f1c40f;
-        }
-
-        #startBjButton {
-            background-color: #3498db;
-        }
-
-        #betMorePoker {
-            background-color: #2ecc71;
-        }
-
-        #checkPokerButton {
-            background-color: #e74c3c;
-        }
-            
-        #startPokerButton {
-            background-color: #3498db;
-        }
-
-        #setBetPoker {
-            background-color: #f1c40f;
-        }
-
-    .poker-chip {
-        display: inline-flex;
-        align-items: center;
-        background-color: #d40000;
-        color: white;
-        padding: 5px 15px;
-        border-radius: 50px;
-        border: 5px dashed white;
-        font-family: 'Arial', sans-serif;
-        font-weight: bold;
-        box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
-        font-size: 2rem;
-    }
-    
-    .chip-icon {
-      margin-right: 8px;
-      font-size: 2.75rem;
-    }
-
-
-    </style>
-
-
-    <div id="verticalStack1" class="vertical-stack">
-        <div id="settingsDashboard" class="game-card">
-            <button id="settingsButton" onclick="toggleSettings();">Settings⚙</button>
-                <div id="settingSection" class="settingSectionClass">
-                    <button id="hideLockedButton" style="width: auto; padding: 12px 165px; font-size: 0.8rem;" onclick="">Hide Locked🔒: ❌</button>
-                    <button id="secondSetting" style="width: auto; padding: 12px 185px; font-size: 0.8rem;" onclick="">setting two</button>
-                </div>
-        </div>
-        <div id="dashboard3" class="game-card">
-            <h1 id="loanDashboard">LOANS🏦</h1>
-            <h2 >TAKE OUT A LOAN:</h2>
-            <input id="loanAmountInput" type="number" placeholder="Loan Amount (e.g. 10000)">
-            <input id="loanLengthInput" type="number" placeholder="Loan Length (10-180 seconds)" style="margin-bottom: 8px;">
-            <button id="calculateInterest" onclick="calculateInterest();">Calculate Interest</button>
-            <h2 id="maxLoanLabel">Max Loan: 0</h2>
-            <h2 id="interestLabel">Debt With Interest: 0</h2>
-            <button id="takeOutLoanButton" onclick="takeOutLoan();">Take Out Loan</button>
-            <button id="timerBar">
-            <button id="payDebtButton" onclick="payDebt();">Pay Your Debt</button>
-        </div>
-    </div>
-
-    
-    
-    <div class="game-card">
-        <p style="font-size: 1.2rem; font-style: italic; opacity: 0.8;">Welcome to my silly game :)</p>
-        
-        <button id="ILIKEMONEY" onclick="ilikemoney();">🤑 100000000 money</button>
-        
-        <h1 id="updateTs" class="pesos-display">pesos🤑: 0</h1>
-        
-        <button id="clickButton" onclick="updateEngine()">CLICK!</button>
-
-        <h2 id="workersOwnedId" style="font-size: 1rem;">Workers Owned🧑🏽‍🌾: 0</h2>
-        
-        <button class="btn" id="buyWorkerButton" onclick="buyWorker()">Buy Worker (10 pesos🫰)</button>
-        
-        <button class="btn" id="makeWorkersWorkButton" onclick="
-            this.disabled = true;
-            this.innerText = 'Wait 3s';
-            setTimeout(() => this.innerText = 'Wait 2s', 1000);
-            setTimeout(() => this.innerText = 'Wait 1s', 2000);
-            setTimeout(() => { this.innerText = 'Start Working ⛏'; this.disabled = false; }, 3000);
-            makeWorkersWork()">Start Working ⛏</button>
-
-        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
-
-        <h2 id="specialUpgradeLabel" style="font-size: 0.9rem; opacity: 0.6;">SPECIAL UPGRADE: LOCKED🔒</h2>
-        <button class="btn" id="dagestanUpgradeButton" onclick="buyDagestanUpgrade();">LOCKED🔒</button>
-        
-        <h2 id="sectionTwoLabel" style="font-size: 0.9rem; opacity: 0.6;">SECTION 2: LOCKED🔒</h2>
-        <button class="btn" id="buyCrashButton" onclick="buyCrash()">LOCKED🔒</button>
-        
-        <div id="crash-section">
-            <h1 id="betDisplay" style="font-size: 1.2rem;">LOCKED🔒</h1>
-            <h1 id="multiplierDisplay" class="multiplier">LOCKED🔒</h1>
-            <button id="setBetButton" onclick="setBet();">LOCKED 🔒</button>
-            <button id="crashStartButton" onclick="startCrash();">LOCKED 🔒</button>
-            <button id="crashStopButton" onclick="stopTickerPositive();">LOCKED 🔒</button>
-
-        </div>
-
-        <div style="height: 75px;"></div>
-        
-        <h1 id="blackJackLabel" class="multiplier">LOCKED 🔒</h1>
-        <button id="buyBlackJackButton" class="btn" onclick="buyBlackJack();">LOCKED 🔒</button>
-        <h1 id="betDisplayBJ" style="font-size: 1.2rem;">LOCKED🔒</h1>
-        
-        <h1 id="combinedCardValueDealer"></h1>
-        <h1 id="dealersHand" style="font-size: 8rem; font-weight: normal; margin-bottom: -5px; gap: -5px;"></h1>
-        <h1 id="playersHand" style="font-size: 8rem; font-weight: normal; margin-bottom: -5px; gap: -5px;"></h1>
-        <h1 id="combinedCardValue"></h1>
-        <button id="setBetButtonBJ" onclick="
-            if(blackJackPurchased == true){
-                setBetBlackJack();
-            };"
-            >LOCKED 🔒Setbet</button>
-        <button id="startBjButton" onclick="
-            if(blackJackPurchased == true){
-                startBlackJack();
-                this.disabled = true;
-            };
-            ">LOCKED 🔒Start</button>
-        <button id="hitButton" onclick="
-            if(blackJackPurchased == true){
-                hit();
-            };">LOCKED 🔒Hit</button>
-        <button id="standButton" onclick="
-            if(blackJackPurchased == true){
-                stand();
-            };
-            ">LOCKED 🔒Stand</button>
-
-        <div style="height: 75px;"></div>
-        <h1 id="pokerLabel" class="multiplier">LOCKED 🔒</h1>
-        <button id="buyPokerButton" class="btn" onclick="buyPoker();">LOCKED 🔒</button>
-        <button id="setBetPoker" onclick="
-            if(pokerPurchased == true){
-                setBetPoker();
-            };"
-            >LOCKED 🔒</button>
-        <div style="height: 15px"></div>
-        <div class="poker-chip" id="betDisplayPoker" style="display: none;">
-            <span class="chip-icon">🪙</span>
-            <span id="player-chips">0</span>
-            <span style="width: 5px"></span>
-        </div>
-        <div style="height: 15px"></div>
-
-        
-         <h1 id="dealersHandLabel"></h1>
-        <h1 id="dealerHand" style="font-size: 8rem; font-weight: normal; margin-bottom: -5px; gap: -5px;"></h1>
-        <h1 id="riverLabel"></h1>
-        <h1 id="river" style="font-size: 8rem; font-weight: normal; margin-bottom: -5px; gap: -5px;"></h1>
-        <h1 id="yourHandLabel"></h1>
-        <h1 id="pokerHand" style="font-size: 8rem; font-weight: normal; margin-bottom: -5px; gap: -5px;"></h1>
-
-        
-        <button id="startPokerButton" onclick="
-            if(pokerPurchased == true){
-                startPoker();
-                this.disabled = true;
-            };
-            ">LOCKED 🔒</button>
-        
-        <button id="checkPokerButton" onclick="
-            if(pokerPurchased == true){
-                checkPoker();
-            };">LOCKED 🔒</button>
-
-        <button id="betMorePoker" onclick="
-            if(pokerPurchased == true){
-                betMorePoker();
-            };">LOCKED 🔒</button>
-        <div style="margin: 40px;">
-            <h1 id="finalHands" style="margin: 10px;"></h1>
-            <h2 style="margin: 0px;">
-                <span id="playerFinal"></span>
-                <span id="string1"></span>
-            </h2>
-            <h2 style="margin: 0px;">
-                <span id="dealersFinal"></span>
-                <span id="string2"></span>
-            </h2>
-        </div>
-    </div>
-</div>
