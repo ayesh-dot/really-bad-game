@@ -193,7 +193,7 @@
             background-color: #3498db;
         }
 
-        #betMorePoker {
+        #betMorePokerButton{
             background-color: #2ecc71;
         }
 
@@ -241,7 +241,7 @@
         width: 90px;
         height: 90px;
         font-size: 2rem;
-    };
+    }
 
 dialog { background: #333; color: white; border: 2px solid gold; border-radius: 15px; padding: 25px; box-shadow: 0 0 50px black; }
 
@@ -270,8 +270,32 @@ dialog { background: #333; color: white; border: 2px solid gold; border-radius: 
 
 
 
+    #cashOutButton {
+        background-color: #22c55e;
+        color: white;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 24px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+    }
+    
+    #cashOutButton:hover {
+        background-color: #16a34a;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+    }
+    
+    #cashOutButton:active {
+        transform: translateY(0px);
+    }
 
-
+    #closeMinesButton{
+        background-color: #333;
+        border: 1px solid #444;
+    }
 
     </style>
 
@@ -407,7 +431,7 @@ dialog { background: #333; color: white; border: 2px solid gold; border-radius: 
                 checkPoker();
             };">LOCKED 🔒</button>
 
-        <button id="betMorePoker" onclick="
+        <button id="betMorePokerButton" onclick="
             if(pokerPurchased == true){
                 betMorePoker();
             };">LOCKED 🔒</button>
@@ -422,10 +446,29 @@ dialog { background: #333; color: white; border: 2px solid gold; border-radius: 
                 <span id="string2"></span>
             </h2>
 
-
-        <button id="setBetMines" onclick="setBetMines();">Set Bet💰</button>
-        <button onclick="generateMines(); openDialog();"> open dialog</button>
-        <dialog id="bettingDialog">
+        
+        
+        
+        
+        <h1 id="minesLabel" class="multiplier">LOCKED 🔒</h1>
+        <button class="btn" id="buyMines" onclick="
+            if(pokerPurchased == true){
+                buyMines(this);
+            };
+            ">LOCKED 🔒</button>
+        
+        <h1 id="minesBetLabel">LOCKED 🔒</h1>
+        <button id="setBetMines" onclick="
+            if(minesPurchased == true){
+                setBetMines();
+            };
+            ">LOCKED 🔒</button>
+        <button id="startMinesButton" onclick="
+            if(minesPurchased == true){
+                generateMines();
+            };
+            ">LOCKED 🔒</button>
+        <dialog id="bettingDialog" closedby="none">
             <h1 class="multiplier" id="minesMultiplier">0.97x</h1>
             <div id="minesGrid">
                 <button class="tile" id="tile-1" onclick="checkTile(1, this)"></button>
@@ -454,13 +497,19 @@ dialog { background: #333; color: white; border: 2px solid gold; border-radius: 
                 <button class="tile" id="tile-24" onclick="checkTile(24, this)"></button>
                 <button class="tile" id="tile-25" onclick="checkTile(25, this)"></button>
             </div>
-            <button onclick="document.getElementById('bettingDialog').close()" style="background: #f44336; color: white;">Cancel</button>
+            <button onclick="cashOut();" id="cashOutButton">Collect 💸</button>
+            <button onclick="loserClose();" id="closeMinesButton" style="display: none;">Close🚩</button>
         </dialog>
         
     </div>
 </div>
 
 <script>
+    window.onerror = function(message, source, lineno, colno, error) {
+    alert("Error: " + message + "\nLine: " + lineno + "\nColumn: " + colno);
+    return false; // This allows the error to also appear in the console
+};
+
 
     let variable = 0;
     let lifeTimeEarnings = 0;
@@ -1285,7 +1334,7 @@ dialog { background: #333; color: white; border: 2px solid gold; border-radius: 
 
         startPokerButton.disabled = true;
         checkPokerButton.disabled = true;
-        betMorePoker.disabled = true;
+        document.getElementById('betMorePokerButton').disabled = true;
         setBetPoker.disabled = false;
     };
     
@@ -1300,7 +1349,7 @@ dialog { background: #333; color: white; border: 2px solid gold; border-radius: 
             document.getElementById('yourHandLabel').innerText = "Your Hand:";
             document.getElementById('startPokerButton').innerText = "Start🃏";
             document.getElementById('checkPokerButton').innerText = "Check 🛡️";
-            document.getElementById('betMorePoker').innerText = "Increase Bet 📈";
+            document.getElementById('betMorePokerButton').innerText = "Increase Bet 📈";
             document.getElementById('playerFinal').innerText = "Your Final Hand:";
             document.getElementById('dealersFinal').innerText = "Dealer's Final Hand:";
             document.getElementById('finalHands').innerText = "Final Hands:";
@@ -1311,7 +1360,7 @@ dialog { background: #333; color: white; border: 2px solid gold; border-radius: 
             document.getElementById('betDisplayPoker').style.display = "inline-flex";
             startPokerButton.disabled = true;
             checkPokerButton.disabled = true;
-            betMorePoker.disabled = true;
+            document.getElementById('betMorePokerButton').disabled = true;
         };
     };
 
@@ -1349,7 +1398,7 @@ dialog { background: #333; color: white; border: 2px solid gold; border-radius: 
 
         setBetPoker.disabled = true;
         checkPokerButton.disabled = false;
-        betMorePoker.disabled = false;
+        document.getElementById('betMorePokerButton').disabled = false;
     };
 
     function checkPoker(){
@@ -1777,7 +1826,7 @@ dialog { background: #333; color: white; border: 2px solid gold; border-radius: 
     function setBetPoker(){
         resetPoker();
         pokerBet = prompt("How much ya wanna bet bubba?? (type a to go all in)");
-        if (pokerBet > variable){
+        if (pokerBet >= variable){
             pokerBet = 0;
             document.getElementById('player-chips').innerText = "Bet: " + pokerBet;
         } else if(pokerBet == 'a'){
@@ -1820,16 +1869,24 @@ dialog { background: #333; color: white; border: 2px solid gold; border-radius: 
     function setBetMines(){
         minesBet = prompt("How much ya wanna bet bubba?? (type a to go all in)");
         
-        if (isNaN(minesBet) || minesBet <= 0) {
+        if(minesBet == "a"){
+            minesBet = variable;
+            minesBet = Number(minesBet);
+            document.getElementById('minesBetLabel').innerText = "Bet: " + minesBet;
+            document.getElementById('startMinesButton').disabled = false;
+        } else if (isNaN(minesBet) || minesBet <= 0) {
             alert("Enter a valid amount, twin.");
             return;
         } else{
             minesBet = Number(minesBet);
+            document.getElementById('minesBetLabel').innerText = "Bet: " + minesBet;
+            document.getElementById('startMinesButton').disabled = false;
         };
 
     };
 
     function generateMines(){
+        document.getElementById('bettingDialog').showModal();
         let safteyArray = [];
         bomb = Math.round(Math.random() * 25);
 
@@ -1853,18 +1910,69 @@ dialog { background: #333; color: white; border: 2px solid gold; border-radius: 
             buttonElement.disabled = true;
             buttonElement.innerText = "💎";
             document.getElementById('minesMultiplier').innerText = minesMultiplier.toFixed(2) + "x";
-
             multText.classList.remove('glow-active');
             void multText.offsetWidth; // This "reflow" is what makes it glow again
             multText.classList.add('glow-active');
         } else if(index == bomb){
             buttonElement.innerText = "💣";
             buttonElement.disabled = true;
+            document.getElementById('closeMinesButton').style.display = "block";
+            document.getElementById('cashOutButton').style.display = "none";
+            document.getElementById('minesGrid').inert = true;
             buttonElement.style.opacity = "100p%";
         };
     };
 
-    function openDialog(){
-        document.getElementById('bettingDialog').showModal();
+    function cashOut(){
+        minesBet *= minesMultiplier;
+        variable += minesBet - 1;
+        updateEngine();
+        resetMines();
     };
+
+    function loserClose(){
+        variable -= minesBet + 1;
+        updateEngine();
+        resetMines();
+    };
+
+    function resetMines(){
+        minesBet = 0;
+        tilesClicked = 0;
+        minesMultiplier = 0.97;
+        bomb = 0;
+        document.getElementById('bettingDialog').close();
+        document.getElementById('minesGrid').inert = false;
+        document.getElementById('startMinesButton').disabled = true;
+        document.getElementById('closeMinesButton').style.display = "none";
+        document.getElementById('cashOutButton').style.display = "block";
+        multText.innerText = "0.97x";
+        document.getElementById('minesBetLabel').innerText = "Bet: 0";
+        for(let i = 1; i < 26; i++){
+            const tile = document.getElementById('tile-' + i)
+            tile.innerText = "";
+            tile.disabled = false;
+            
+        };
+    };
+    
+    let minesPurchased = false;
+    
+    function buyMines(buyButton){
+        if(variable > 74999){
+            buyButton.style.display = "none";
+            variable -= 75001
+            updateEngine();
+            document.getElementById('startMinesButton').disabled = true;
+            minesPurchased = true;
+
+            document.getElementById('minesLabel').innerText = "💣MINES💣";
+            document.getElementById('minesBetLabel').innerText = "Bet: 0";
+            document.getElementById('setBetMines').innerText = "Set Bet 💰";
+            document.getElementById('startMinesButton').innerText = "Start Mines 💣";
+                
+        };
+    };
+        
+    
 </script>
