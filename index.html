@@ -21,6 +21,25 @@
     function ilikemoney(){
         variable = 99999999;
         updateEngine();
+        buyWorker();
+        buyWorker();
+        buyWorker();
+        buyWorker();
+        buyWorker();
+        buyWorker();
+        buyWorker();
+        buyWorker();
+        buyWorker();
+        buyWorker();
+        buyWorker();
+        buyWorker();
+        buyWorker();
+        buyWorker();
+        buyWorker();
+        buyDagestanUpgrade();
+        buyCrash();
+        buyBlackJack();
+        buyPoker();
         
     };
     
@@ -368,6 +387,7 @@
             document.getElementById('hitButton').innerText = "Hit💥";
             document.getElementById('standButton').innerText = "Stand🛡️";
             document.getElementById('buyBlackJackButton').style.display = "none";
+            document.getElementById('buyPokerButton').innerText = "♦BUY POKER♦(50,000 pesos🫰🤑💰)";
 
             startBjButton.disabled = true;
             hitButton.disabled = true;
@@ -811,27 +831,43 @@
           // Clubs
           "🃑", "🃒", "🃓", "🃔", "🃕", "🃖", "🃗", "🃘", "🃙", "🃚", "🃛", "🃝", "🃞"
         ];
-        document.getElementById('river').innerText = "";
-        document.getElementById('pokerHand').innerText = "";
 
         startPokerButton.disabled = true;
-        checkPoker.disabled = true;
+        checkPokerButton.disabled = true;
         betMorePoker.disabled = true;
         setBetPoker.disabled = false;
     };
     
     function buyPoker(){
         if(variable > 49999 && crashPurchased == true){
+            
+            document.getElementById('pokerLabel').innerText = "♦POKER♦";
+            document.getElementById('setBetPoker').innerText = "Set Bet💰";
+                
+            document.getElementById('dealersHandLabel').innerText = "Dealer's Hand:";
+            document.getElementById('riverLabel').innerText = "River:";
+            document.getElementById('yourHandLabel').innerText = "Your Hand:";
+            document.getElementById('startPokerButton').innerText = "Start🃏";
+            document.getElementById('checkPokerButton').innerText = "Check 🛡️";
+            document.getElementById('betMorePoker').innerText = "Increase Bet 📈";
+            document.getElementById('playerFinal').innerText = "Your Final Hand:";
+            document.getElementById('dealersFinal').innerText = "Dealer's Final Hand:";
+            document.getElementById('finalHands').innerText = "Final Hands:";
             variable -= 50000
             pokerPurchased = true;
             document.getElementById('buyPokerButton').style.display = "none";
+
+            document.getElementById('betDisplayPoker').style.display = "inline-flex";
             startPokerButton.disabled = true;
-            checkPoker.disabled = true;
+            checkPokerButton.disabled = true;
             betMorePoker.disabled = true;
         };
     };
 
     function startPoker(){
+        document.getElementById('pokerHand').innerText = "";
+        document.getElementById('dealerHand').innerText = "";
+        document.getElementById('river').innerText = "";
         let index = Math.floor(Math.random() * pokerDeck.length);
         let randomCard = pokerDeck.splice(index, 1)[0];
         let cardValue = cardValuesPoker[randomCard];
@@ -858,8 +894,10 @@
         cardValue = cardValuesPoker[randomCard];
         pokerHandDealer.push(cardValue);
 
+        document.getElementById('dealerHand').innerText = "🂠🂠";
+
         setBetPoker.disabled = true;
-        checkPoker.disabled = false;
+        checkPokerButton.disabled = false;
         betMorePoker.disabled = false;
     };
 
@@ -1237,8 +1275,12 @@
     function comparePokerHands(){
         if(playerPowerIndex > dealerPowerIndex){
             alert("YOU WON THE POKER MATCH");
+            variable += pokerBet
+            resetPoker();
         }else if(dealerPowerIndex > playerPowerIndex){
             alert("YOU LOST THE POKER MATCH");
+            variable -= pokerBet
+            resetPoker();
         } else{
             
             let allCards = pokerHand.concat(river);
@@ -1259,8 +1301,12 @@
             
             if(playerTotal > dealerTotal){
                 alert("YOU WON THE POKER MATCH");
+                variable += pokerBet
+                resetPoker();
             } else{
                 alert("YOU LOST THE POKER MATCH");
+                variable -= pokerBet
+                resetPoker();
             };
             
         };
@@ -1271,11 +1317,12 @@
         if (pokerBet > variable){
             pokerBet = 0;
             document.getElementById('player-chips').innerText = "Bet: " + pokerBet;
-        } else if(blackJackBet == 'a'){
+        } else if(pokerBet == 'a'){
             pokerBet = variable;
             startPokerButton.disabled = false;
             document.getElementById('player-chips').innerText = "Bet: " + pokerBet;
-        } else if(blackJackBet < 0){
+            
+        } else if(pokerBet < 0){
             pokerBet = 0;
             document.getElementById('player-chips').innerText = "Bet: " + pokerBet;
         } else{
@@ -1284,6 +1331,25 @@
         };
         pokerBet = Number(pokerBet);
     };
+
+    function betMorePoker() {
+        let input = prompt("How much ya wanna increase bet by bubba??");
+        let increase = Number(input);
+    
+        if (isNaN(increase) || increase <= 0) {
+            alert("Enter a valid amount, twin.");
+            return;
+        }
+    
+        if ((pokerBet + increase) > variable) {
+            alert("You don't have enough pesos for that total bet!");
+        } else {
+            pokerBet += increase;
+            document.getElementById('player-chips').innerText = "Bet: " + pokerBet;
+            document.getElementById('startPokerButton').disabled = false;
+        }
+    }
+
 
 </script>
     
@@ -1473,7 +1539,7 @@
             background-color: #2ecc71;
         }
 
-        #checkPoker {
+        #checkPokerButton {
             background-color: #e74c3c;
         }
             
@@ -1572,7 +1638,7 @@
 
         <div style="height: 75px;"></div>
         
-        <h1 id="blackJackLabel">LOCKED 🔒</h1>
+        <h1 id="blackJackLabel" class="multiplier">LOCKED 🔒</h1>
         <button id="buyBlackJackButton" class="btn" onclick="buyBlackJack();">LOCKED 🔒</button>
         <h1 id="betDisplayBJ" style="font-size: 1.2rem;">LOCKED🔒</h1>
         
@@ -1602,15 +1668,15 @@
             ">LOCKED 🔒Stand</button>
 
         <div style="height: 75px;"></div>
-        <h1 id="pokerLabel">♦POKER♦</h1>
-        <button id="buyPokerButton" class="btn" onclick="buyPoker();">♦BUY POKER♦(50,000 pesos🫰🤑💰) </button>
+        <h1 id="pokerLabel" class="multiplier">LOCKED 🔒</h1>
+        <button id="buyPokerButton" class="btn" onclick="buyPoker();">LOCKED 🔒</button>
         <button id="setBetPoker" onclick="
             if(pokerPurchased == true){
                 setBetPoker();
             };"
-            >Set Bet💰</button>
+            >LOCKED 🔒</button>
         <div style="height: 15px"></div>
-        <div class="poker-chip">
+        <div class="poker-chip" id="betDisplayPoker" style="display: none;">
             <span class="chip-icon">🪙</span>
             <span id="player-chips">0</span>
             <span style="width: 5px"></span>
@@ -1618,11 +1684,11 @@
         <div style="height: 15px"></div>
 
         
-         <h1 id="dealersHandLabel">Dealer's Hand:</h1>
+         <h1 id="dealersHandLabel"></h1>
         <h1 id="dealerHand" style="font-size: 8rem; font-weight: normal; margin-bottom: -5px; gap: -5px;"></h1>
-        <h1 id="riverLabel">River:</h1>
+        <h1 id="riverLabel"></h1>
         <h1 id="river" style="font-size: 8rem; font-weight: normal; margin-bottom: -5px; gap: -5px;"></h1>
-        <h1 id="yourHandLabel">Your Hand:</h1>
+        <h1 id="yourHandLabel"></h1>
         <h1 id="pokerHand" style="font-size: 8rem; font-weight: normal; margin-bottom: -5px; gap: -5px;"></h1>
 
         
@@ -1631,22 +1697,27 @@
                 startPoker();
                 this.disabled = true;
             };
-            ">Start🃏</button>
+            ">LOCKED 🔒</button>
         
-        <button id="checkPoker" onclick="
+        <button id="checkPokerButton" onclick="
             if(pokerPurchased == true){
                 checkPoker();
-            };">Check 🛡️</button>
+            };">LOCKED 🔒</button>
 
         <button id="betMorePoker" onclick="
             if(pokerPurchased == true){
                 betMorePoker();
-            };">Increase Bet 📈</button>
-
-        <h1 id="string1">string</h1>
-        <h1 id="string2">string2</h1>
-        
+            };">LOCKED 🔒</button>
+        <div style="margin: 40px;">
+            <h1 id="finalHands" style="margin: 10px;"></h1>
+            <h2 style="margin: 0px;">
+                <span id="playerFinal"></span>
+                <span id="string1"></span>
+            </h2>
+            <h2 style="margin: 0px;">
+                <span id="dealersFinal"></span>
+                <span id="string2"></span>
+            </h2>
+        </div>
     </div>
 </div>
-
-
